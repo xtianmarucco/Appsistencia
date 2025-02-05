@@ -1,0 +1,22 @@
+
+@import "tailwindcss";
+
+
+@theme{
+ --color-primary: #fff; 
+ --color-primary-text:#312f6a; /*   // Azul oscuro  */
+  --color-secondary: #fbfbc4;  /*   // Amarillo claro  */
+  --color-accent: #6bace3;     /*  // Azul claro  */
+  --color-error: #e3341c;      /*   // Rojo brillante  */
+  --color-errorDark: #8a2b24;  /*    // Rojo oscuro */
+  --color-errorLight: #b54139; /*   // Rojo medio  */
+  --color-neutral: #a494ac;   /*    // Gris violáceo */
+  --color-neutralDark:#c3737b;  /*  ,// Rosa oscuro //   */
+}
+
+
+body {
+  font-family: 'Nunito', sans-serif;
+  background-color: var(--color-secondary);
+  color: var(--color-primary);
+}
