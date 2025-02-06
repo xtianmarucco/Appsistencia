@@ -14,7 +14,12 @@ export const loginUser = createAsyncThunk(
 export const logoutUser = createAsyncThunk(
   'auth/logout',
   async (_, { dispatch }) => {
-    await logout(); // Llama al servicio de cierre de sesión
-    dispatch(setUser(null)); // Limpia el estado de Redux
+    try {
+      await logout(); // Llama al servicio de cierre de sesión
+      dispatch(logout()); // Despacha la acción para limpiar el estado
+      localStorage.removeItem('reduxState'); // Limpia el localStorage
+    } catch (error) {
+      throw error;
+    }
   }
 );

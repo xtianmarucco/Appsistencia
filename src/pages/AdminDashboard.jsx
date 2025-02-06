@@ -1,4 +1,4 @@
-import UserList from '../components/usersList';
+// import UserList from '../components/usersList';
 
 const AdminDashboard = () => {
   return (
