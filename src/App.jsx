@@ -1,5 +1,4 @@
 import "./App.css";
-import UserProfile from "./components/userProfile/userProfile";
 // import UserList from "./components/usersList";
 
 
@@ -14,7 +13,6 @@ function App() {
 
         <div>
           {/* <UserList></UserList> */}
-          <UserProfile/>
         </div>
         <button className="bg-error text-white px-4 py-2 mt-4 rounded">
           Haz clic aquí
