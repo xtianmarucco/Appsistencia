@@ -1,13 +1,16 @@
 import UserList from "../components/usersList";
+import Navbar from "../components/navbar/navbar";
 
 const EmployeeDashboard = () => {
-    return (
-      <div className="bg-red-400">
-        <h1 className="">Panel de Empleado</h1>
-        <p>Bienvenido, empleado. Aquí puedes registrar tu asistencia.</p>
-        <UserList/>
-      </div>
-    );
-  };
-  
-  export default EmployeeDashboard;
+  return (
+    <div className="">
+      <Navbar />
+
+      <h1 className="">Panel de Empleado</h1>
+      <p>Bienvenido, empleado. Aquí puedes registrar tu asistencia.</p>
+      <UserList />
+    </div>
+  );
+};
+
+export default EmployeeDashboard;

@@ -1,11 +1,14 @@
 // import UserList from '../components/usersList';
 
+import Navbar from "../components/navbar/navbar";
+
 const AdminDashboard = () => {
   return (
     <>
-      <div className="p-4 bg-red-400 text-primary-text">
+    <Navbar className="bg-color-secondary"/>
+      <div className="p-4 text-primary-text">
         <h1 className="text-2xl font-bold">Panel de Administrador</h1>
-        <p>
+        <p>#b03d34
           Bienvenido, administrador. Aquí puedes gestionar usuarios y ver
           reportes.
         </p>
