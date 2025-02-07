@@ -8,6 +8,7 @@ import App from "./App";
 import Login from "./pages/Login";
 import AdminDashboard from "./pages/AdminDashboard";
 import EmployeeDashboard from "./pages/EmployeeDashboard";
+import SetupOtp from "./pages/SetupOtp";
 import "./index.css";
 
 createRoot(document.getElementById("root")).render(
@@ -31,6 +32,14 @@ createRoot(document.getElementById("root")).render(
             element={
               <PrivateRoute requiredRole="employee">
                 <EmployeeDashboard />
+              </PrivateRoute>
+            }
+          />
+            <Route
+            path="/setup-otp"
+            element={
+              <PrivateRoute requiredRole="employee">
+                <SetupOtp />
               </PrivateRoute>
             }
           />

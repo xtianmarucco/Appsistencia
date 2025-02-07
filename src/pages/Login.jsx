@@ -10,12 +10,15 @@ const Login = () => {
   const [error, setError] = useState('');
 
   const handleLogin = async ({ email, password }) => {
-    setError('Credenciales inválidas. Por favor, inténtalo de nuevo.');
-
+    setError('');
+  
     try {
       const userData = await dispatch(loginUser({ email, password })).unwrap();
-      // Redirige al panel correspondiente según el rol del usuario
-      navigate(userData.role === 'admin' ? '/admin' : '/employee');
+      if (userData.role === 'employee' && !userData.user_otp_configured) {
+        navigate('/setup-otp'); // Redirige a la pantalla de configuración de OTP
+      } else {
+        navigate(userData.role === 'admin' ? '/admin' : '/employee');
+      }
     } catch (error) {
       setError('Credenciales inválidas. Por favor, inténtalo de nuevo.');
     }

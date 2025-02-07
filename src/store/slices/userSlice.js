@@ -35,7 +35,7 @@ const initialState = {
   user: null,
   role: null,
   user_otp_configured: false,
-  isAuthenticated: false,
+  // isAuthenticated: false,
 };
 
 const userSlice = createSlice({
@@ -48,6 +48,9 @@ const userSlice = createSlice({
       state.user_otp_configured = action.payload?.user_otp_configured || false;
       state.isAuthenticated = !!action.payload;
     },
+    setUserOtpConfigured: (state, action) => {
+      state.user_otp_configured = action.payload;
+    },
     logout: (state) => {
       state.user = null;
       state.role = null;
@@ -57,5 +60,5 @@ const userSlice = createSlice({
   },
 });
 
-export const { setUser, logout } = userSlice.actions;
+export const { setUser, setUserOtpConfigured, logout } = userSlice.actions;
 export default userSlice.reducer;
