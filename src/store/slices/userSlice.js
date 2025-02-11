@@ -1,64 +1,30 @@
-// import { createSlice } from '@reduxjs/toolkit';
-
-// const initialState = {
-//   user: null, // Datos del usuario
-//   role: null, // 'admin' o 'employee'
-//   user_otp_configured: false, // Indica si el usuario ha configurado OTP
-//   isAuthenticated: false, // Indica si el usuario está autenticado
-// };
-
-// const userSlice = createSlice({
-//   name: 'user',
-//   initialState,
-//   reducers: {
-//     setUser: (state, action) => {
-//       state.user = action.payload;
-//       state.role = action.payload?.role || null;
-//       state.user_otp_configured = action.payload?.user_otp_configured || false;
-//       state.isAuthenticated = !!action.payload;
-//     },
-//     logout: (state) => {
-//       state.user = null;
-//       state.role = null;
-//       state.user_otp_configured = false;
-//       state.isAuthenticated = false;
-//     },
-//   },
-// });
-
-// export const { setUser, logout } = userSlice.actions;
-// export default userSlice.reducer;
-
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   user: null,
   role: null,
   user_otp_configured: false,
-  // isAuthenticated: false,
 };
 
 const userSlice = createSlice({
-  name: 'user',
+  name: "user",
   initialState,
   reducers: {
     setUser: (state, action) => {
-      state.user = action.payload;
-      state.role = action.payload?.role || null;
-      state.user_otp_configured = action.payload?.user_otp_configured || false;
-      state.isAuthenticated = !!action.payload;
+      const userData = action.payload || {};
+      state.user = userData;
+      state.role = userData.role || null;
+      state.user_otp_configured = userData.user_otp_configured ?? false;
     },
     setUserOtpConfigured: (state, action) => {
       state.user_otp_configured = action.payload;
     },
-    logout: (state) => {
-      state.user = null;
-      state.role = null;
-      state.user_otp_configured = false;
-      state.isAuthenticated = false;
-    },
+    logout: () => initialState, // Reinicia el estado al estado inicial
   },
 });
 
+// Exportar las acciones para usar en los componentes
 export const { setUser, setUserOtpConfigured, logout } = userSlice.actions;
+
+// Exportar el reducer para configurarlo en el store de Redux
 export default userSlice.reducer;

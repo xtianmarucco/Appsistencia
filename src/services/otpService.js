@@ -8,7 +8,7 @@ export const generateOTPSecret = () => {
 
 // Genera el URI para el código QR (formato estándar para autenticadores)
 export const generateOTPAuthURI = (email, secret) => {
-  return authenticator.keyuri(email, 'TuApp', secret); // "TuApp" es el nombre de tu aplicación
+  return authenticator.keyuri(email, 'Appsistencia', secret); // "TuApp" es el nombre de tu aplicación
 };
 
 // Guarda la clave secreta en Supabase
