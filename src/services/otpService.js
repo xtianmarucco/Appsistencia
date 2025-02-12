@@ -20,3 +20,8 @@ export const saveOTPSecret = async (userId, secret) => {
 
   if (error) throw error;
 };
+
+// Valida un código OTP ingresado por el usuario
+export function validateOtp(secret, otp) {
+  return authenticator.check(otp, secret);
+}

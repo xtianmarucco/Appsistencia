@@ -1,14 +1,14 @@
 import { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { validateOtp } from "../../services/otpService";
-import { updateUserOtpConfigured } from "../../store/slices/userSlice"; 
+import { setUserOtpConfigured } from "../../store/slices/userSlice";
 import { supabase } from "../../lib/supabaseClient";
 
 export default function OtpValidation({ onSuccess }) {
   const [otp, setOtp] = useState("");
   const [error, setError] = useState("");
   const dispatch = useDispatch();
-  const user = useSelector((state) => state.user);
+  const user = useSelector((state) => state.user.user);
 
   const handleValidation = async () => {
     setError("");
@@ -23,7 +23,7 @@ export default function OtpValidation({ onSuccess }) {
       await supabase.from("users").update({ user_otp_configured: true }).eq("id", user.id);
       
       // Actualizar estado en Redux
-      dispatch(updateUserOtpConfigured(true));
+      dispatch(setUserOtpConfigured(true));
 
       onSuccess(); // Llamar a la función del padre para avanzar
     } catch (err) {

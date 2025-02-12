@@ -1,27 +1,37 @@
-import { useEffect, useState } from "react";
-import {QRCodeSVG} from 'qrcode.react';
+import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
+import { QRCodeCanvas } from "qrcode.react";
+
 import { generateOTPAuthURI } from "../../services/otpService";
+import { supabase } from "../../lib/supabaseClient";
 
 export default function QrSetup() {
-  const user = useSelector((state) => state.user);
-  const [qrCode, setQrCode] = useState("");
+  const user = useSelector((state) => state.user.user);
+  const [otpUri, setOtpUri] = useState(null);
 
   useEffect(() => {
-    if (user?.otp_secret) {
-      const otpAuthUrl = generateOTPAuthURI(user.email, "Appsistencia", user.otp_secret);
-      setQrCode(otpAuthUrl);
-    }
+    const fetchOtpSecret = async () => {
+      if (!user || user.otp_secret) {
+        setOtpUri(generateOTPAuthURI(user.email, user.otp_secret));
+        return;
+      }
+
+      // Si el usuario no tiene un otp_secret, lo generamos y guardamos en la BD
+      const secret = authenticator.generateSecret();
+      await supabase.from("users").update({ otp_secret: secret }).eq("id", user.id);
+      
+      setOtpUri(generateOTPAuthURI(user.email, secret));
+    };
+
+    fetchOtpSecret();
   }, [user]);
 
-  if (!qrCode) return null; // No renderiza nada si no hay un QR para mostrar
+  if (!otpUri) return <p>Cargando QR...</p>;
 
   return (
     <div className="flex flex-col items-center">
-      <h2 className="text-xl font-bold">Escanea este código QR con Google Authenticator</h2>
-      {/* <QRCodeSVG value="www.google.com" size={200} /> */}
-      <QRCodeSVG value={qrCode} size={200} />
-      <p className="text-sm text-gray-600 mt-2">Luego ingresa el código OTP generado.</p>
-    </div>
+      <h3 className="text-lg font-bold mb-2">Escanea este código QR con Google Authenticator</h3>
+      <QRCodeCanvas value={otpUri} size={200} />
+      </div>
   );
 }

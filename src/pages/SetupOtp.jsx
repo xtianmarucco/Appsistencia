@@ -1,6 +1,6 @@
 import { useSelector } from "react-redux";
 import QrSetup from "../components/qr-generator/QrSetup";
-import OtpValidation from "../components/otp-validator/OtpValidation";
+// import OtpValidation from "../components/otp-validator/OtpValidation";
 import { useState } from "react";
 import Navbar from "../components/navbar/navbar";
 
@@ -12,11 +12,11 @@ export default function SetupOtp() {
 
   return (
     <>
-      <div className="min-h-screen flex flex-col items-center justify-center">
+      <div>
         <Navbar />
 
         <QrSetup />
-        <OtpValidation onSuccess={() => setIsOtpValidated(true)} />
+        {/* <OtpValidation onSuccess={() => setIsOtpValidated(true)} /> */}
         <div />
       </div>
     </>
