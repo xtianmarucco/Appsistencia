@@ -7,10 +7,10 @@ import { store } from "../src/store/store";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import PrivateRoute from "./routes/privateRoute";
 import App from "./App";
-import Login from "./pages/Login";
-import AdminDashboard from "./pages/AdminDashboard";
-import EmployeeDashboard from "./pages/EmployeeDashboard";
-import SetupOtp from "./pages/SetupOtp";
+import Login from "./pages/LoginPage";
+import AdminDashboard from "./pages/AdminDashboardPage";
+import EmployeeDashboard from "./pages/EmployeeDashboardPage";
+import SetupOtp from "./pages/SetupOtpPage";
 import "./index.css";
 
 createRoot(document.getElementById("root")).render(

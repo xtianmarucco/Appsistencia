@@ -1,12 +1,14 @@
 import { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { validateOtp } from "../../services/otpService";
 import { setUserOtpConfigured } from "../../store/slices/userSlice";
-import { supabase } from "../../lib/supabaseClient";
+import { useNavigate } from "react-router-dom";
+import SuccessModal from "../validate-success-modal/OtpValidateModal";
 
-export default function OtpValidation({ onSuccess }) {
+
+export default function OtpValidation() {
   const [otp, setOtp] = useState("");
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState(false);
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user.user);
 
@@ -14,18 +16,23 @@ export default function OtpValidation({ onSuccess }) {
     setError("");
 
     try {
-      const isValid = validateOtp(user.otp_secret, otp);
-      if (!isValid) {
-        throw new Error("Código OTP inválido.");
+      const response = await fetch("http://localhost:3000/validate-otp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId: user.id, otp }),
+      });
+
+      const data = await response.json();
+
+      if (!data.valid) {
+        throw new Error(data.message || "Código OTP inválido.");
       }
 
-      // Actualizar estado en la BD
-      await supabase.from("users").update({ user_otp_configured: true }).eq("id", user.id);
-      
-      // Actualizar estado en Redux
+      // ✅ Si el OTP es válido, actualizamos Redux
       dispatch(setUserOtpConfigured(true));
 
-      onSuccess(); // Llamar a la función del padre para avanzar
+      // ✅ Mostrar el modal de éxito
+      setSuccess(true);
     } catch (err) {
       setError(err.message);
     }
@@ -45,10 +52,14 @@ export default function OtpValidation({ onSuccess }) {
       {error && <p className="text-red-500">{error}</p>}
       <button
         onClick={handleValidation}
-        className="bg-blue-500 text-white px-4 py-2 rounded cursor-pointer"
+        className="bg-primary-dark text-white px-4 py-2 rounded hover:bg-primary"
       >
-        Confirmar
+        Confirmar OTP
       </button>
+
+      {/* Modal de éxito */}
+      {success && <SuccessModal />}
     </div>
   );
 }
+
