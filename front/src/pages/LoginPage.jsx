@@ -1,26 +1,35 @@
-import { useState } from 'react';
-import { useDispatch } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
-import { loginUser } from '../thunks/authThunks';
-import LoginForm from '../components/login-form/LoginForm';
-
+import { useState } from "react";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { loginUser } from "../thunks/authThunks";
+import { setUser } from "../store/slices/userSlice"; // Asegúrate de importar esto
+import LoginForm from "../components/login-form/LoginForm";
 const Login = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
   const handleLogin = async ({ email, password }) => {
-    setError('');
-  
+    setError("");
+
     try {
       const userData = await dispatch(loginUser({ email, password })).unwrap();
-      if (userData.role === 'employee' && !userData.user_otp_configured) {
-        navigate('/setup-otp'); // Redirige a la pantalla de configuración de OTP
+
+      console.log("✅ Login exitoso, datos recibidos:", userData);
+
+      // 🔹 Guardamos los datos en Redux
+      dispatch(setUser(userData));
+
+      console.log("🛠 Estado actualizado en Redux - user_otp_configured:", userData.user_otp_configured);
+
+      // 🔹 Redirigir según el rol y OTP
+      if (userData.role === "admin") {
+        navigate("/admin");
       } else {
-        navigate(userData.role === 'admin' ? '/admin' : '/employee');
+        navigate("/setup-otp");
       }
     } catch (error) {
-      setError('Credenciales inválidas. Por favor, inténtalo de nuevo.');
+      setError("Credenciales inválidas. Por favor, inténtalo de nuevo.");
     }
   };
 

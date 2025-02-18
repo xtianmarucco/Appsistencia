@@ -1,30 +1,33 @@
-import { logoutUser } from "../../thunks/authThunks";
 import { useDispatch } from "react-redux";
+import { logoutUser } from "../../store/slices/userSlice";
 import { useNavigate } from "react-router-dom";
 
-export default function SuccessModal() {
-  const navigate = useNavigate();
+export default function OtpValidateModal({ onClose }) {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
-  const handleLogout = () => {
-    dispatch(logoutUser()).then(() => {
-      navigate("/login"); // Redirige al usuario a la página de login
-    });
+  console.log("🎉 Renderizando OtpValidateModal...");
+
+  const handleClose = () => {
+    console.log("🚪 Cerrando sesión... mostrando el modal de éxito");
+    dispatch(logoutUser()); // 🔥 Cierra sesión
+    navigate("/login"); // 🔥 Redirige al login
+    onClose();
   };
+
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="bg-white p-6 rounded shadow-lg text-center">
-        <h2 className="text-lg font-bold text-green-600 mb-2">
-          ✅ ¡Autenticador Configurado con Éxito!
-        </h2>
-        <p className="mb-4">
-          Debes cerrar sesión y volver a loguearte para continuar.
+      <div className="bg-white p-6 rounded shadow-md text-center">
+        <h2 className="text-lg font-bold text-green-600">✅ Autenticador Conectado</h2>
+        <p className="mt-2 text-gray-700">
+          Tu autenticador se ha configurado correctamente. <br />
+          Cierra sesión y vuelve a iniciar sesión para marcar tu entrada o salida.
         </p>
         <button
-          onClick={handleLogout}
-          className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-700"
+          onClick={handleClose}
+          className="mt-4 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
         >
-          Cerrar Sesión
+          Cerrar sesión
         </button>
       </div>
     </div>

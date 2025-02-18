@@ -1,16 +1,15 @@
 import { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { setUserOtpConfigured } from "../../store/slices/userSlice";
-import { useNavigate } from "react-router-dom";
-import SuccessModal from "../validate-success-modal/OtpValidateModal";
-
+import { setUserOtpConfigured, showOtpValidationModal } from "../../store/slices/userSlice";
 
 export default function OtpValidation() {
   const [otp, setOtp] = useState("");
   const [error, setError] = useState("");
-  const [success, setSuccess] = useState(false);
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user.user);
+  const showOtpModal = useSelector((state) => state.user.showOtpModal); // 🔥 Verificar estado
+
+  console.log("🧐 Estado Redux - showOtpModal:", showOtpModal);
 
   const handleValidation = async () => {
     setError("");
@@ -28,11 +27,12 @@ export default function OtpValidation() {
         throw new Error(data.message || "Código OTP inválido.");
       }
 
-      // ✅ Si el OTP es válido, actualizamos Redux
+      // ✅ Actualizar Redux
       dispatch(setUserOtpConfigured(true));
 
-      // ✅ Mostrar el modal de éxito
-      setSuccess(true);
+      // ✅ Activar el modal en Redux
+      dispatch(showOtpValidationModal());
+      console.log("🎉 OTP Validado, activando el modal...");
     } catch (err) {
       setError(err.message);
     }
@@ -43,6 +43,7 @@ export default function OtpValidation() {
       <h3 className="text-lg font-bold text-primary-dark mb-2">
         Ingresa el código de Google Authenticator
       </h3>
+
       <input
         type="text"
         value={otp}
@@ -56,10 +57,6 @@ export default function OtpValidation() {
       >
         Confirmar OTP
       </button>
-
-      {/* Modal de éxito */}
-      {success && <SuccessModal />}
     </div>
   );
 }
-
