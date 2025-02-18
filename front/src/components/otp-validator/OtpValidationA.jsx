@@ -1,31 +1,38 @@
 import { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { validateOtp } from "../../services/otpService";
-import { setUserOtpConfigured } from "../../store/slices/userSlice";
-import { supabase } from "../../lib/supabaseClient";
+import { setUserOtpConfigured, showOtpValidationModal } from "../../store/slices/userSlice";
 
-export default function OtpValidation({ onSuccess }) {
+export default function OtpValidation() {
   const [otp, setOtp] = useState("");
   const [error, setError] = useState("");
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user.user);
+  const showOtpModal = useSelector((state) => state.user.showOtpModal); // 🔥 Verificar estado
+
+  console.log("🧐 Estado Redux - showOtpModal:", showOtpModal);
 
   const handleValidation = async () => {
     setError("");
 
     try {
-      const isValid = validateOtp(user.otp_secret, otp);
-      if (!isValid) {
-        throw new Error("Código OTP inválido.");
+      const response = await fetch("http://localhost:3000/validate-otp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId: user.id, otp }),
+      });
+
+      const data = await response.json();
+
+      if (!data.valid) {
+        throw new Error(data.message || "Código OTP inválido.");
       }
 
-      // Actualizar estado en la BD
-      await supabase.from("users").update({ user_otp_configured: true }).eq("id", user.id);
-      
-      // Actualizar estado en Redux
+      // ✅ Actualizar Redux
       dispatch(setUserOtpConfigured(true));
 
-      onSuccess(); // Llamar a la función del padre para avanzar
+      // ✅ Activar el modal en Redux
+      dispatch(showOtpValidationModal());
+      console.log("🎉 OTP Validado, activando el modal...");
     } catch (err) {
       setError(err.message);
     }
@@ -36,6 +43,7 @@ export default function OtpValidation({ onSuccess }) {
       <h3 className="text-lg font-bold text-primary-dark mb-2">
         Ingresa el código de Google Authenticator
       </h3>
+
       <input
         type="text"
         value={otp}
@@ -45,9 +53,9 @@ export default function OtpValidation({ onSuccess }) {
       {error && <p className="text-red-500">{error}</p>}
       <button
         onClick={handleValidation}
-        className="bg-blue-500 text-white px-4 py-2 rounded cursor-pointer"
+        className="bg-primary-dark text-white px-4 py-2 rounded hover:bg-primary"
       >
-        Confirmar
+        Confirmar OTP
       </button>
     </div>
   );
