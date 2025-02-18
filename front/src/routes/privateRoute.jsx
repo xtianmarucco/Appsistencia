@@ -14,10 +14,10 @@ const PrivateRoute = ({ children, requiredRole }) => {
     }
   }, [role]);
 
-  console.log("🚀 PrivateRoute - Role:", role);
-  console.log("🔐 PrivateRoute - Required Role:", requiredRole);
-  console.log("🔑 PrivateRoute - OTP Configured:", userOtpConfigured);
-  console.log("📍 Ubicación actual:", location.pathname);
+  // console.log("🚀 PrivateRoute - Role:", role);
+  // console.log("🔐 PrivateRoute - Required Role:", requiredRole);
+  // console.log("🔑 PrivateRoute - OTP Configured:", userOtpConfigured);
+  // console.log("📍 Ubicación actual:", location.pathname);
   console.log("⏳ Loading State:", isLoading);
 
   if (isLoading) {
@@ -25,19 +25,19 @@ const PrivateRoute = ({ children, requiredRole }) => {
   }
 
   if (!role) {
-    console.log("⛔ Redirigiendo al login...");
+    // console.log("⛔ Redirigiendo al login...");
     return <Navigate to="/login" replace />;
   }
 
   if (role === "employee" && !userOtpConfigured) {
     // 🚀 Evitar redirección infinita si ya estamos en "/setup-otp"
     if (location.pathname !== "/setup-otp") {
-      console.log("🔄 Redirigiendo a setup-otp...");
+      // console.log("🔄 Redirigiendo a setup-otp...");
       return <Navigate to="/setup-otp" replace />;
     }
   }
 
-  console.log("✅ Renderizando página dentro de PrivateRoute.");
+  // console.log("✅ Renderizando página dentro de PrivateRoute.");
   return children;
 };
 

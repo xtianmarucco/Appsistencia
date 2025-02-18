@@ -23,7 +23,7 @@ export default function SetupOtpPage() {
   console.log("🧐 Intentando Renderizar el Modal - showOtpModal:", showOtpModal);
 
   useEffect(() => {
-    console.log("👀 SetupOtpPage - user_otp_configured:", userOtpConfigured);
+    // console.log("👀 SetupOtpPage - user_otp_configured:", userOtpConfigured);
   }, [userOtpConfigured]);
 
  
@@ -36,13 +36,13 @@ export default function SetupOtpPage() {
 
   useEffect(() => {
     if (user) {
-      console.log("🔄 Forzando actualización de Redux en SetupOtpPage...");
+      // console.log("🔄 Forzando actualización de Redux en SetupOtpPage...");
       dispatch(setUser(user));
     }
   }, []);
 
-  console.log("👀 SetupOtpPage MONTADO - user_otp_configured:", userOtpConfigured);
-  console.log("📌 ¿QR Escaneado?:", qrScanned);
+  // console.log("👀 SetupOtpPage MONTADO - user_otp_configured:", userOtpConfigured);
+  // console.log("📌 ¿QR Escaneado?:", qrScanned);
 
   if (!isReady) {
     return <p>Cargando usuario...</p>;
@@ -50,6 +50,7 @@ export default function SetupOtpPage() {
 
   return (
     <>
+    
     <Navbar />
     <div className="flex flex-col items-center p-4">
       <h2 className="text-2xl font-bold mb-4">Verificación OTP</h2>

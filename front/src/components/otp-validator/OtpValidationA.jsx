@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { setUserOtpConfigured, showOtpValidationModal } from "../../store/slices/userSlice";
+import { setUserOtpConfigured, showOtpValidationModal, setLoading } from "../../store/slices/userSlice";
 
 export default function OtpValidation() {
   const [otp, setOtp] = useState("");
@@ -13,6 +13,8 @@ export default function OtpValidation() {
 
   const handleValidation = async () => {
     setError("");
+    dispatch(setLoading(true)); // 🔥 Activar Loader
+
 
     try {
       const response = await fetch("http://localhost:3000/validate-otp", {
@@ -35,7 +37,11 @@ export default function OtpValidation() {
       console.log("🎉 OTP Validado, activando el modal...");
     } catch (err) {
       setError(err.message);
-    }
+    } finally {
+      setTimeout(() => {
+        dispatch(setLoading(false)); // 🔥 Desactivamos el Loader después de un pequeño delay
+        console.log("❌ Loader desactivado, isLoading:", isLoading);
+      }, 500);     }
   };
 
   return (

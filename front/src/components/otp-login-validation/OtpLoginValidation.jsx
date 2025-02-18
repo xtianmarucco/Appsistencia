@@ -1,8 +1,11 @@
 import { useState } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { setLoading } from "../../store/slices/userSlice";
+
 
 export default function OtpLoginValidation() {
+  const dispatch = useDispatch();
   const [otp, setOtp] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
@@ -10,6 +13,7 @@ export default function OtpLoginValidation() {
 
   const handleValidation = async () => {
     setError("");
+    dispatch(setLoading(true)); // 🔥 Activar Loader
 
     try {
       const response = await fetch("http://localhost:3000/validate-otp", {
@@ -29,6 +33,11 @@ export default function OtpLoginValidation() {
     } catch (err) {
       setError(err.message);
     }
+     finally{
+      setTimeout(() => {
+        dispatch(setLoading(false)); // 🔥 Desactivamos el Loader después de un pequeño delay
+        console.log("❌ Loader desactivado, isLoading:", isLoading);
+      }, 500);      }
   };
 
   return (
