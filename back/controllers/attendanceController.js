@@ -1,4 +1,4 @@
-import { supabase } from "../lib/supabaseClient.js";
+import  supabase  from "../lib/supabaseClient.js";
 import { v4 as uuidv4 } from "uuid";
 
 export const getAttendances = async (req, res) => {
