@@ -37,7 +37,7 @@ export default function OtpLoginValidation() {
       setTimeout(() => {
         dispatch(setLoading(false)); // 🔥 Desactivamos el Loader después de un pequeño delay
         console.log("❌ Loader desactivado, isLoading:", isLoading);
-      }, 500);      }
+      }, 300);      }
   };
 
   return (

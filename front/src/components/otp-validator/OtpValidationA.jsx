@@ -41,7 +41,7 @@ export default function OtpValidation() {
       setTimeout(() => {
         dispatch(setLoading(false)); // 🔥 Desactivamos el Loader después de un pequeño delay
         console.log("❌ Loader desactivado, isLoading:", isLoading);
-      }, 500);     }
+      }, 300);     }
   };
 
   return (
@@ -59,7 +59,7 @@ export default function OtpValidation() {
       {error && <p className="text-red-500">{error}</p>}
       <button
         onClick={handleValidation}
-        className="bg-primary-dark text-white px-4 py-2 rounded hover:bg-primary"
+        className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-primary"
       >
         Confirmar OTP
       </button>
