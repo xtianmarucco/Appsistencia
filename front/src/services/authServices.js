@@ -5,8 +5,7 @@ export const login = async (email, password) => {
     // Consulta la tabla "users" para encontrar un usuario con el email proporcionado
     const { data, error } = await supabase
       .from('users')
-      .select('*')
-      .eq('email', email)
+      .select('id, email, role, user_otp_configured, password')       .eq('email', email)
       .single(); // Espera un solo resultado
 
     if (error) {

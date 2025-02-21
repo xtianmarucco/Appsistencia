@@ -9,39 +9,40 @@ export default function OtpValidation() {
   const user = useSelector((state) => state.user.user);
   const showOtpModal = useSelector((state) => state.user.showOtpModal); // 🔥 Verificar estado
 
-  console.log("🧐 Estado Redux - showOtpModal:", showOtpModal);
-
   const handleValidation = async () => {
     setError("");
-    dispatch(setLoading(true)); // 🔥 Activar Loader
-
-
+    dispatch(setLoading(true));
+  
     try {
-      const response = await fetch("http://localhost:3000/validate-otp", {
+      const response = await fetch("http://localhost:3000/api/auth/validate-otp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId: user.id, otp }),
+        body: JSON.stringify({ user_id: user.id, otp_code: otp }),
       });
-
+  
       const data = await response.json();
-
-      if (!data.valid) {
-        throw new Error(data.message || "Código OTP inválido.");
+      console.log("🎯 Respuesta del servidor:", data);
+  
+      if (!data.success) {
+        throw new Error(data.error || "Código OTP inválido.");
       }
-
+  
       // ✅ Actualizar Redux
       dispatch(setUserOtpConfigured(true));
-
+      console.log("🔄 Estado actualizado en Redux: user_otp_configured = true");
+  
       // ✅ Activar el modal en Redux
       dispatch(showOtpValidationModal());
       console.log("🎉 OTP Validado, activando el modal...");
     } catch (err) {
+      console.error("❌ Error en la validación OTP:", err);
       setError(err.message);
     } finally {
       setTimeout(() => {
-        dispatch(setLoading(false)); // 🔥 Desactivamos el Loader después de un pequeño delay
-        console.log("❌ Loader desactivado, isLoading:", isLoading);
-      }, 300);     }
+        dispatch(setLoading(false));
+        console.log("❌ Loader desactivado");
+      }, 300);
+    }
   };
 
   return (

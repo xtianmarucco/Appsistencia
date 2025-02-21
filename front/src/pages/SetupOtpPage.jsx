@@ -20,7 +20,7 @@ export default function SetupOtpPage() {
   const [isReady, setIsReady] = useState(false);
   const showOtpModal = useSelector((state) => state.user.showOtpModal);
 
-  console.log("🧐 Intentando Renderizar el Modal - showOtpModal:", showOtpModal);
+  // console.log("🧐 Intentando Renderizar el Modal - showOtpModal:", showOtpModal);
 
   useEffect(() => {
     // console.log("👀 SetupOtpPage - user_otp_configured:", userOtpConfigured);

@@ -11,34 +11,67 @@ export default function OtpLoginValidation() {
   const navigate = useNavigate();
   const user = useSelector((state) => state.user.user);
 
+  // const handleValidation = async () => {
+  //   setError("");
+  //   dispatch(setLoading(true)); // 🔥 Activar Loader
+
+  //   try {
+  //     const response = await fetch("http://localhost:3000/api/auth/validate-otp", {
+  //       method: "POST",
+  //       headers: { "Content-Type": "application/json" },
+  //       body: JSON.stringify({ user_id: user.id, otp_code: otp }),
+  //     });
+
+  //     const data = await response.json();
+
+  //     if (!data.valid) {
+  //       throw new Error(data.message || "Código OTP inválido.");
+  //     }
+
+  //     // ✅ Redirigir al usuario a la página de check-in/out
+  //     navigate("/check-in-out");
+  //   } catch (err) {
+  //     setError(err.message);
+  //   }
+  //    finally{
+  //     setTimeout(() => {
+  //       dispatch(setLoading(false)); // 🔥 Desactivamos el Loader después de un pequeño delay
+  //       // console.log("❌ Loader desactivado, isLoading:", isLoading);
+  //     }, 300);      }
+  // };
+
   const handleValidation = async () => {
     setError("");
-    dispatch(setLoading(true)); // 🔥 Activar Loader
+    dispatch(setLoading(true));
 
     try {
-      const response = await fetch("http://localhost:3000/validate-otp", {
+      const response = await fetch("http://localhost:3000/api/auth/validate-otp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId: user.id, otp }),
+        body: JSON.stringify({ user_id: user.id, otp_code: otp }),
       });
 
-      const data = await response.json();
+      const text = await response.text(); // 🔥 Ver respuesta cruda antes de convertir a JSON
+      console.log("🔍 Respuesta cruda del backend:", text);
 
-      if (!data.valid) {
+      const data = JSON.parse(text); // 🔥 Convertimos a JSON manualmente
+
+      if (!data.success) {
         throw new Error(data.message || "Código OTP inválido.");
       }
 
       // ✅ Redirigir al usuario a la página de check-in/out
       navigate("/check-in-out");
     } catch (err) {
+      console.error("❌ Error en la validación OTP:", err);
       setError(err.message);
-    }
-     finally{
+    } finally {
       setTimeout(() => {
-        dispatch(setLoading(false)); // 🔥 Desactivamos el Loader después de un pequeño delay
-        console.log("❌ Loader desactivado, isLoading:", isLoading);
-      }, 300);      }
-  };
+        dispatch(setLoading(false));
+      }, 300);
+    }
+};
+
 
   return (
     <div className="bg-yellow-100 p-4 rounded shadow-md">

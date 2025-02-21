@@ -18,7 +18,7 @@ const PrivateRoute = ({ children, requiredRole }) => {
   // console.log("🔐 PrivateRoute - Required Role:", requiredRole);
   // console.log("🔑 PrivateRoute - OTP Configured:", userOtpConfigured);
   // console.log("📍 Ubicación actual:", location.pathname);
-  console.log("⏳ Loading State:", isLoading);
+  // console.log("⏳ Loading State:", isLoading);
 
   if (isLoading) {
     return <p>Cargando...</p>; // Evita redirecciones prematuras
