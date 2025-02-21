@@ -1,4 +1,4 @@
-import UserList from "../components/usersList";
+// import UserList from "../components/usersList";
 import Navbar from "../components/navbar/navbar";
 
 const EmployeeDashboard = () => {
@@ -8,7 +8,7 @@ const EmployeeDashboard = () => {
 
       <h1 className="">Panel de Empleado</h1>
       <p>Bienvenido, empleado. Aquí puedes registrar tu asistencia.</p>
-      <UserList />
+      {/* <UserList /> */}
     </div>
   );
 };

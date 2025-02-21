@@ -5,6 +5,8 @@ import AdminDashboard from "../pages/AdminDashboardPage";
 import EmployeeDashboard from "../pages/EmployeeDashboardPage";
 import SetupOtpPage from "../pages/SetupOtpPage";
 import CheckInOutPage from "../pages/CheckInOutPage";
+import UserListPage from "../pages/UserListPage";
+
 
 export default function AppRoutes() {
   return (
@@ -15,6 +17,14 @@ export default function AppRoutes() {
         element={
           <PrivateRoute requiredRole="admin">
             <AdminDashboard />
+          </PrivateRoute>
+        }
+      />
+       <Route
+        path="/user-list"
+        element={
+          <PrivateRoute requiredRole="admin">
+            <UserListPage />
           </PrivateRoute>
         }
       />
