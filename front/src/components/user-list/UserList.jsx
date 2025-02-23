@@ -7,8 +7,9 @@ export default function UserList({ users }) {
 
   // 🔥 Filtrar usuarios por nombre
   const filteredUsers = users.filter((user) =>
-    user.full_name.toLowerCase().includes(search.toLowerCase())
+    user.name.toLowerCase().includes(search.toLowerCase())
   );
+  console.log("📊 Usuarios recibidos en el frontend:", users);
 
   return (
     <div className="p-4">

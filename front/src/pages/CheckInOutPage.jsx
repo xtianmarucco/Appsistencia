@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
-import Navbar from "../components/navbar/navbar"
+import Navbar from "../components/navbar/Navbar"
 
 export default function CheckInOutPage() {
   const user = useSelector((state) => state.user.user);
@@ -26,7 +26,7 @@ export default function CheckInOutPage() {
 
   return (
     <>
-    <Navbar />
+    <Navbar/>
     <div className="flex flex-col items-center p-4">
       <h2 className="text-2xl font-bold mb-4">Registro de Entrada/Salida</h2>
       <p className="text-lg">Bienvenido, {user?.username} {user?.lastname}</p>
