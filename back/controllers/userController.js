@@ -1,15 +1,14 @@
 import supabase from "../lib/supabaseClient.js";
+import { v4 as uuidv4 } from "uuid"; // Para generar UUIDs únicos
 
-// Obtener todos los usuarios
+// ✅ Obtener todos los usuarios
 export const getUsers = async (req, res) => {
   try {
     const { data, error } = await supabase
       .from("users")
-      .select("id, name, role, email");
+      .select("id, name, lastname, email, role, hourly_wage, active");
 
-    if (error) {
-      throw error;
-    }
+    if (error) throw error;
 
     res.json(data);
   } catch (error) {
@@ -17,6 +16,123 @@ export const getUsers = async (req, res) => {
     res.status(500).json({ error: "Error al obtener usuarios" });
   }
 };
+
+// ✅ Obtener un usuario por ID
+export const getUserById = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const { data, error } = await supabase
+      .from("users")
+      .select("id, name, lastname, email, role, hourly_wage, active")
+      .eq("id", id)
+      .single();
+
+    if (error) throw error;
+
+    res.json(data);
+  } catch (error) {
+    console.error("❌ Error al obtener usuario:", error);
+    res.status(500).json({ error: "Error al obtener usuario" });
+  }
+};
+
+// ✅ Crear un nuevo usuario
+export const createUser = async (req, res) => {
+  try {
+    const { name, lastname, email, role, hourly_wage } = req.body;
+
+    // 📌 Validación de datos
+    if (!name || !lastname || !email || !role) {
+      return res.status(400).json({ error: "Todos los campos son obligatorios" });
+    }
+
+    // 📌 Verificar si el email ya existe
+    const { data: existingUser, error: emailError } = await supabase
+      .from("users")
+      .select("id")
+      .eq("email", email)
+      .single();
+
+    if (existingUser) {
+      return res.status(400).json({ error: "El email ya está en uso" });
+    }
+
+    if (emailError && emailError.code !== "PGRST116") throw emailError; // Ignorar error de no encontrado
+
+    // 📌 Insertar usuario en la base de datos
+    const { data, error } = await supabase.from("users").insert([
+      {
+        id: uuidv4(),
+        name,
+        lastname,
+        email,
+        role,
+        hourly_wage: role === "employee" ? hourly_wage || 0 : null, // Si es admin, no necesita salario
+        active: true, // Por defecto el usuario está activo
+        created_at: new Date().toISOString(),
+      },
+    ]);
+
+    if (error) throw error;
+
+    res.status(201).json({ message: "Usuario creado con éxito", user: data });
+  } catch (error) {
+    console.error("❌ Error al crear usuario:", error);
+    res.status(500).json({ error: "Error al crear usuario" });
+  }
+};
+
+// ✅ Editar usuario
+export const updateUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { name, lastname, email, role, hourly_wage, active } = req.body;
+
+    // 📌 Validación de datos
+    if (!name || !lastname || !email || !role) {
+      return res.status(400).json({ error: "Todos los campos son obligatorios" });
+    }
+
+    // 📌 Actualizar usuario
+    const { data, error } = await supabase
+      .from("users")
+      .update({
+        name,
+        lastname,
+        email,
+        role,
+        hourly_wage: role === "employee" ? hourly_wage : null,
+        active,
+      })
+      .eq("id", id);
+
+    if (error) throw error;
+
+    res.json({ message: "Usuario actualizado con éxito" });
+  } catch (error) {
+    console.error("❌ Error al actualizar usuario:", error);
+    res.status(500).json({ error: "Error al actualizar usuario" });
+  }
+};
+
+// ✅ Eliminar usuario
+export const deleteUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // 📌 Eliminar usuario por ID
+    const { error } = await supabase.from("users").delete().eq("id", id);
+
+    if (error) throw error;
+
+    res.json({ message: "Usuario eliminado con éxito" });
+  } catch (error) {
+    console.error("❌ Error al eliminar usuario:", error);
+    res.status(500).json({ error: "Error al eliminar usuario" });
+  }
+};
+
 
 // Obtener usuarios con horas trabajadas
 export const getUsersWithHours = async (req, res) => {

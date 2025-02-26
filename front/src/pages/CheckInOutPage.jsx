@@ -1,53 +1,124 @@
-import { useState, useEffect } from "react";
-import { useSelector } from "react-redux";
-import Navbar from "../components/navbar/Navbar"
+import { useEffect, useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { setLoading, logoutUser } from "../store/slices/userSlice";
+import CheckInOutModal from "../components/check-in-out-modal/CheckInOutModal";
 
 export default function CheckInOutPage() {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const user = useSelector((state) => state.user.user);
+  const [isLoading, setIsLoading] = useState(false);
   const [hasCheckedIn, setHasCheckedIn] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalType, setModalType] = useState(null);
+  const [timestamp, setTimestamp] = useState(null);
 
   useEffect(() => {
-    // Aquí podríamos hacer una petición al backend para ver si el usuario ya hizo check-in hoy
-    setLoading(false);
-  }, []);
+    // Consultar si el usuario tiene un check-in activo
+    const fetchCheckInStatus = async () => {
+      try {
+        const response = await fetch(
+          `http://localhost:3000/api/attendances/check-in-status/${user.id}`
+        );
+        const data = await response.json();
+        setHasCheckedIn(data.hasCheckedIn);
+      } catch (error) {
+        console.error("❌ Error al verificar check-in:", error);
+      }
+    };
 
-  const handleCheckIn = async () => {
-    setHasCheckedIn(true);
-    // Enviar la información al backend
+    fetchCheckInStatus();
+  }, [user]);
+
+  const handleCheckInOut = async (actionType) => {
+    if (!user) return;
+
+    setIsLoading(true);
+    dispatch(setLoading(true));
+
+    try {
+      const response = await fetch(
+        "http://localhost:3000/api/attendances/check-in-out",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ user_id: user.id }),
+        }
+      );
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setModalType(actionType);
+        setTimestamp(new Date());
+        setHasCheckedIn(actionType === "check-in");
+      } else {
+        setModalType("error");
+      }
+
+      setModalOpen(true);
+    } catch (error) {
+      setModalType("error");
+      setModalOpen(true);
+    } finally {
+      setIsLoading(false);
+      dispatch(setLoading(false));
+    }
   };
 
-  const handleCheckOut = async () => {
-    setHasCheckedIn(false);
-    // Enviar la información al backend
-  };
+  const handleCloseModal = () => {
+    setModalOpen(false);
 
-  if (loading) return <p>Cargando información...</p>;
+    if (modalType === "check-in" || modalType === "check-out") {
+      dispatch(logoutUser());
+      navigate("/login");
+    }
+  };
 
   return (
-    <>
-    <Navbar/>
     <div className="flex flex-col items-center p-4">
       <h2 className="text-2xl font-bold mb-4">Registro de Entrada/Salida</h2>
-      <p className="text-lg">Bienvenido, {user?.username} {user?.lastname}</p>
 
-      {hasCheckedIn ? (
+      <p className="text-lg mb-4">
+        Usuario: {user.name} {user.lastname}
+      </p>
+
+      <p className="text-xl font-mono mb-6">
+        🕒 {new Date().toLocaleTimeString()}
+      </p>
+
+      {!hasCheckedIn ? (
         <button
-          onClick={handleCheckOut}
-          className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 mt-4"
+          onClick={() => handleCheckInOut("check-in")}
+          disabled={isLoading}
+          className={`px-6 py-3 rounded text-white text-lg font-bold ${
+            isLoading ? "bg-gray-500" : "bg-green-600 hover:bg-green-700"
+          }`}
         >
-          Marcar Salida
+          {isLoading ? "Procesando..." : "Marcar Entrada"}
         </button>
       ) : (
         <button
-          onClick={handleCheckIn}
-          className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 mt-4"
+          onClick={() => handleCheckInOut("check-out")}
+          disabled={isLoading}
+          className={`px-6 py-3 rounded text-white text-lg font-bold ${
+            isLoading ? "bg-gray-500" : "bg-red-600 hover:bg-red-700"
+          }`}
         >
-          Marcar Entrada
+          {isLoading ? "Procesando..." : "Marcar Salida"}
         </button>
       )}
+
+      {modalOpen && (
+        <CheckInOutModal
+          isOpen={modalOpen}
+          type={modalType}
+          timestamp={timestamp}
+          onClose={handleCloseModal}
+          user={user}
+        />
+      )}
     </div>
-    </>
-   
   );
 }

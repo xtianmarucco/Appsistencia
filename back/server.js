@@ -14,6 +14,7 @@ app.use(express.json());
 app.use("/api/auth", authRoutes);
 app.use("/api/attendances", attendanceRoutes);
 app.use("/api/users", userRoutes);
+app.use("/api/atteendances", attendanceRoutes);
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`✅ Servidor corriendo en http://localhost:${PORT}`);
