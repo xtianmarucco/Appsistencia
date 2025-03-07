@@ -1,5 +1,6 @@
 import supabase from "../lib/supabaseClient.js";
 import { v4 as uuidv4 } from "uuid"; // Para generar UUIDs únicos
+import { authenticator } from "otplib";
 
 // ✅ Obtener todos los usuarios
 export const getUsers = async (req, res) => {
@@ -38,50 +39,44 @@ export const getUserById = async (req, res) => {
 };
 
 // ✅ Crear un nuevo usuario
+
 export const createUser = async (req, res) => {
   try {
-    const { name, lastname, email, role, hourly_wage } = req.body;
+    const { name, lastname, email, id_number, role, hourly_wage, password, active = true } = req.body;
 
-    // 📌 Validación de datos
-    if (!name || !lastname || !email || !role) {
-      return res.status(400).json({ error: "Todos los campos son obligatorios" });
+    if (!name || !lastname || !email || !role || !password) {
+      return res.status(400).json({ error: "Faltan campos obligatorios." });
     }
 
-    // 📌 Verificar si el email ya existe
-    const { data: existingUser, error: emailError } = await supabase
-      .from("users")
-      .select("id")
-      .eq("email", email)
-      .single();
+    // 🔥 Generar automáticamente el `otp_secret`
+    const otpSecret = authenticator.generateSecret();
 
-    if (existingUser) {
-      return res.status(400).json({ error: "El email ya está en uso" });
-    }
-
-    if (emailError && emailError.code !== "PGRST116") throw emailError; // Ignorar error de no encontrado
-
-    // 📌 Insertar usuario en la base de datos
     const { data, error } = await supabase.from("users").insert([
       {
         id: uuidv4(),
         name,
         lastname,
         email,
+        id_number: id_number || null,
         role,
-        hourly_wage: role === "employee" ? hourly_wage || 0 : null, // Si es admin, no necesita salario
-        active: true, // Por defecto el usuario está activo
+        hourly_wage: hourly_wage || 0,
         created_at: new Date().toISOString(),
-      },
-    ]);
+        active,
+        password, // ⚠️ Importante: Debería ser encriptada en producción
+        otp_secret: otpSecret, // 🔥 Se genera automáticamente
+        user_otp_configured: false // 🔹 Todavía no ha sido vinculado con la app de autenticación
+      }
+    ]).select();
 
     if (error) throw error;
 
-    res.status(201).json({ message: "Usuario creado con éxito", user: data });
+    res.status(201).json({ message: "Usuario creado con éxito.", user: data[0] });
   } catch (error) {
     console.error("❌ Error al crear usuario:", error);
-    res.status(500).json({ error: "Error al crear usuario" });
+    res.status(500).json({ error: "Error al crear usuario." });
   }
 };
+
 
 // ✅ Editar usuario
 export const updateUser = async (req, res) => {
@@ -91,7 +86,9 @@ export const updateUser = async (req, res) => {
 
     // 📌 Validación de datos
     if (!name || !lastname || !email || !role) {
-      return res.status(400).json({ error: "Todos los campos son obligatorios" });
+      return res
+        .status(400)
+        .json({ error: "Todos los campos son obligatorios" });
     }
 
     // 📌 Actualizar usuario
@@ -133,7 +130,6 @@ export const deleteUser = async (req, res) => {
   }
 };
 
-
 // Obtener usuarios con horas trabajadas
 export const getUsersWithHours = async (req, res) => {
   try {
@@ -157,15 +153,25 @@ export const getUsersWithHours = async (req, res) => {
       throw attendanceError;
     }
 
-    console.log("🧐 Datos obtenidos de attendances desde Supabase:", attendances);
+    console.log(
+      "🧐 Datos obtenidos de attendances desde Supabase:",
+      attendances
+    );
 
     if (!attendances || attendances.length === 0) {
       console.log("❌ No hay datos de asistencia.");
-      return res.json({ message: "No data found", hoursLast7Days: "0.00", hoursLast15Days: "0.00", hoursLast30Days: "0.00" });
+      return res.json({
+        message: "No data found",
+        hoursLast7Days: "0.00",
+        hoursLast15Days: "0.00",
+        hoursLast30Days: "0.00",
+      });
     }
 
     // 🔹 Obtener la última fecha registrada en la DB como referencia
-    const latestRecord = new Date(attendances[attendances.length - 1].timestamp);
+    const latestRecord = new Date(
+      attendances[attendances.length - 1].timestamp
+    );
     console.log("📆 Última fecha registrada en la DB:", latestRecord);
 
     // 🔹 Definir rangos de fechas en función de la última fecha registrada
@@ -193,41 +199,52 @@ export const getUsersWithHours = async (req, res) => {
       if (!groupedAttendances[record.user_id][record.work_session_id]) {
         groupedAttendances[record.user_id][record.work_session_id] = {
           checkin: null,
-          checkout: null
+          checkout: null,
         };
       }
 
       if (record.action === "check-in") {
-        groupedAttendances[record.user_id][record.work_session_id].checkin = new Date(record.timestamp);
+        groupedAttendances[record.user_id][record.work_session_id].checkin =
+          new Date(record.timestamp);
       } else if (record.action === "check-out") {
-        groupedAttendances[record.user_id][record.work_session_id].checkout = new Date(record.timestamp);
+        groupedAttendances[record.user_id][record.work_session_id].checkout =
+          new Date(record.timestamp);
       }
     });
 
-    console.log("📊 Registros agrupados por usuario y sesión:", groupedAttendances);
+    console.log(
+      "📊 Registros agrupados por usuario y sesión:",
+      groupedAttendances
+    );
 
     // 🔥 Función para calcular horas trabajadas en un período
     const getTotalHours = (userId, dateLimit) => {
       const userSessions = groupedAttendances[userId] || {};
 
-      console.log(`🧐 Revisando sesiones de trabajo del usuario ${userId} desde ${dateLimit}`);
+      console.log(
+        `🧐 Revisando sesiones de trabajo del usuario ${userId} desde ${dateLimit}`
+      );
 
       return Object.values(userSessions)
-        .filter(session => session.checkin && session.checkout) // 🔥 Asegurar que haya ambos registros
-        .filter(session => {
+        .filter((session) => session.checkin && session.checkout) // 🔥 Asegurar que haya ambos registros
+        .filter((session) => {
           const checkinTime = new Date(session.checkin);
           return checkinTime >= dateLimit;
         }) // 🔥 Solo contar sesiones dentro del rango
-        .map(session => {
+        .map((session) => {
           const checkinTime = new Date(session.checkin);
           const checkoutTime = new Date(session.checkout);
 
           if (checkoutTime > checkinTime) {
             const workedHours = (checkoutTime - checkinTime) / (1000 * 60 * 60);
-            console.log(`✅ Sesión válida - Check-in: ${checkinTime}, Check-out: ${checkoutTime}, Horas trabajadas: ${workedHours}`);
+            console.log(
+              `✅ Sesión válida - Check-in: ${checkinTime}, Check-out: ${checkoutTime}, Horas trabajadas: ${workedHours}`
+            );
             return workedHours;
           } else {
-            console.warn(`⚠️ Error en sesión: Check-in (${checkinTime}) ocurre después de Check-out (${checkoutTime})`);
+            console.warn(
+              `⚠️ Error en sesión: Check-in (${checkinTime}) ocurre después de Check-out (${checkoutTime})`
+            );
             return 0;
           }
         })
@@ -236,7 +253,7 @@ export const getUsersWithHours = async (req, res) => {
     };
 
     // 🔹 Calcular horas trabajadas por usuario en cada período
-    const usersWithHours = users.map(user => ({
+    const usersWithHours = users.map((user) => ({
       ...user,
       hoursLast7Days: getTotalHours(user.id, last7Days),
       hoursLast15Days: getTotalHours(user.id, last15Days),
@@ -248,6 +265,8 @@ export const getUsersWithHours = async (req, res) => {
     res.json(usersWithHours);
   } catch (error) {
     console.error("❌ Error al obtener usuarios con horas trabajadas:", error);
-    res.status(500).json({ error: "Error al obtener usuarios con horas trabajadas" });
+    res
+      .status(500)
+      .json({ error: "Error al obtener usuarios con horas trabajadas" });
   }
 };
