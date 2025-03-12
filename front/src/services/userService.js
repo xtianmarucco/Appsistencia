@@ -44,26 +44,6 @@ export const createUser = async (userData) => {
   };
   
   // 🔹 Editar usuario
-  export const updateUser = async (userId, updatedData) => {
-    try {
-      const response = await fetch(`${API_URL}/${userId}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(updatedData),
-      });
-  
-      if (!response.ok) {
-        throw new Error("Error al actualizar usuario");
-      }
-  
-      return await response.json();
-    } catch (error) {
-      console.error("❌ Error en updateUser:", error);
-      throw error;
-    }
-  };
   
 // 🔥 Función para eliminar usuario
 export const deleteUser = async (userId) => {
@@ -86,4 +66,17 @@ export const deleteUser = async (userId) => {
     console.error("❌ Error en deleteUser:", error);
     throw error;
   }
+};
+// editar usuarios
+export const updateUser = async (userData) => {
+  const response = await fetch(`${API_URL}/${userData.id}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(userData),
+  });
+
+  if (!response.ok) {
+    throw new Error("Error al actualizar usuario");
+  }
+  return response.json();
 };
