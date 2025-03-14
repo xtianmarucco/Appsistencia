@@ -37,8 +37,12 @@ export default function UserFormModal({ isOpen, onClose, onSubmit, userData }) {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="bg-white p-6 rounded shadow-lg w-96">
+    <div className="fixed inset-0 flex items-center justify-center z-50">
+      {/* 🔹 Fondo oscuro con opacidad */}
+      <div className="fixed inset-0 bg-gray-500 opacity-80"></div>
+
+      {/* 🔹 Contenedor del formulario (sin opacidad) */}
+      <div className="relative bg-white p-6 rounded shadow-lg w-96 z-10">
         <h2 className="text-xl font-bold mb-4">
           {userData ? "Editar Usuario" : "Crear Usuario"}
         </h2>

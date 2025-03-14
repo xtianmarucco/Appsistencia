@@ -1,21 +1,26 @@
 import { useState, useEffect } from "react";
 import { fetchUsers, deleteUser } from "../../services/userService";
+import ConfirmModal from "../confirm-modal/ConfirmModal"; // ✅ Importar el modal de confirmación
 
 export default function UserTable({ onEdit }) {
   const [users, setUsers] = useState([]);
+  const [filteredUsers, setFilteredUsers] = useState([]); // ✅ Nuevo estado para los usuarios filtrados
   const [search, setSearch] = useState("");
-  const [error, setError] = useState(""); // ✅ Estado para manejar errores
+  const [error, setError] = useState(""); // ✅ Manejo de errores
   const [loading, setLoading] = useState(false); // ✅ Estado de carga
+  const [confirmModal, setConfirmModal] = useState({ isOpen: false, userId: null }); // ✅ Estado para modal
 
   useEffect(() => {
     loadUsers();
   }, []);
 
+  // 🔥 Cargar usuarios desde la API
   const loadUsers = async () => {
     try {
       setLoading(true);
       const data = await fetchUsers();
       setUsers(data);
+      setFilteredUsers(data); // ✅ También actualizar `filteredUsers`
     } catch (error) {
       console.error("❌ Error al obtener usuarios:", error);
       setError("Error al obtener usuarios.");
@@ -24,28 +29,37 @@ export default function UserTable({ onEdit }) {
     }
   };
 
-  // Filtrar usuarios por nombre
-  const filteredUsers = users.filter(user =>
-    user.name.toLowerCase().includes(search.toLowerCase())
-  );
+  // 🔥 Filtrar usuarios al cambiar la búsqueda
+  useEffect(() => {
+    setFilteredUsers(
+      users.filter((user) =>
+        user.name.toLowerCase().includes(search.toLowerCase())
+      )
+    );
+  }, [search, users]);
 
-  const handleDelete = async (userId) => {
-    if (!window.confirm("¿Estás seguro de que deseas eliminar este usuario?")) {
-      return;
-    }
+  // 🔥 Abrir modal de confirmación
+  const confirmDeleteUser = (userId) => {
+    setConfirmModal({ isOpen: true, userId });
+  };
+
+  // ✅ Confirmar eliminación del usuario
+  const handleConfirmDelete = async () => {
+    if (!confirmModal.userId) return;
 
     try {
-      setLoading(true); // 🔥 Activar loading
-      await deleteUser(userId);
+      setLoading(true);
+      await deleteUser(confirmModal.userId);
       console.log("✅ Usuario eliminado correctamente.");
 
-      // 🔥 Recargar la lista de usuarios desde el backend
-      loadUsers();
+      // 🔥 Actualizar lista sin hacer otra petición
+      setUsers(users.filter((user) => user.id !== confirmModal.userId));
     } catch (err) {
       console.error("❌ Error al eliminar usuario:", err);
       setError("Error al eliminar el usuario.");
     } finally {
       setLoading(false);
+      setConfirmModal({ isOpen: false, userId: null }); // 🔥 Cerrar modal
     }
   };
 
@@ -92,22 +106,31 @@ export default function UserTable({ onEdit }) {
               </td>
               <td className="border border-gray-300 px-4 py-2">
                 <button
-                  className="bg-blue-500 text-white px-2 py-1 rounded mr-2"
+                  className="cursor-pointer px-2 py-1 rounded mr-2"
                   onClick={() => onEdit(user)}
                 >
-                  ✏️ Editar
+                  ✏️ 
                 </button>
                 <button
-                  className="bg-red-500 text-white px-2 py-1 rounded"
-                  onClick={() => handleDelete(user.id)}
+                  className="cursor-pointer px-2 py-1"
+                  onClick={() => confirmDeleteUser(user.id)}
                 >
-                  🗑️ Eliminar
+                  🗑️ 
                 </button>
               </td>
             </tr>
           ))}
         </tbody>
       </table>
+
+      {/* 🔥 Modal de Confirmación */}
+      <ConfirmModal
+        isOpen={confirmModal.isOpen}
+        onClose={() => setConfirmModal({ isOpen: false, userId: null })}
+        onConfirm={handleConfirmDelete}
+        title="Eliminar Usuario"
+        message="¿Estás seguro de que deseas eliminar este usuario? Esta acción no se puede deshacer."
+      />
     </div>
   );
 }
