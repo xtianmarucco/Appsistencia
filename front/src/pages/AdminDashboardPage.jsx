@@ -1,26 +1,36 @@
 import { useState } from "react";
-import { createUser, updateUser } from "../services/userService"; 
-
+import { createUser, updateUser } from "../services/userService";
 import UserTable from "../components/user-table/UserTable";
 import UserFormModal from "../components/user-form-modal/UserFormModal";
 import NotificationModal from "../components/notification-modal/NotificationModal";
-import ConfirmModal from "../components/confirm-modal/ConfirmModal";
 import Navbar from "../components/navbar/navbar";
 
 const AdminDashboard = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingUser, setEditingUser] = useState(null);
-  const [notification, setNotification] = useState({ isOpen: false, message: "", isError: false });
+  const [notification, setNotification] = useState({
+    isOpen: false,
+    message: "",
+    isError: false,
+  });
 
   // ✅ Crear usuario
   const handleCreateUser = async (userData) => {
     try {
       await createUser(userData);
       setIsModalOpen(false);
-      setNotification({ isOpen: true, message: "Usuario creado con éxito", isError: false });
+      setNotification({
+        isOpen: true,
+        message: "Usuario creado con éxito",
+        isError: false,
+      });
     } catch (error) {
       console.error("❌ Error al crear usuario:", error);
-      setNotification({ isOpen: true, message: "Error al crear usuario", isError: true });
+      setNotification({
+        isOpen: true,
+        message: "Error al crear usuario",
+        isError: true,
+      });
     }
   };
 
@@ -29,10 +39,18 @@ const AdminDashboard = () => {
     try {
       await updateUser(userData);
       setIsModalOpen(false);
-      setNotification({ isOpen: true, message: "Usuario actualizado con éxito", isError: false });
+      setNotification({
+        isOpen: true,
+        message: "Usuario actualizado con éxito",
+        isError: false,
+      });
     } catch (error) {
       console.error("❌ Error al actualizar usuario:", error);
-      setNotification({ isOpen: true, message: "Error al actualizar usuario", isError: true });
+      setNotification({
+        isOpen: true,
+        message: "Error al actualizar usuario",
+        isError: true,
+      });
     }
   };
 
