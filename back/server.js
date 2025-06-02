@@ -1,6 +1,7 @@
 import "dotenv/config";
 import express from "express";
 import cors from "cors";
+import loginRoutes from "./routes/loginRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
 import attendanceRoutes from "./routes/attendanceRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
@@ -11,6 +12,7 @@ app.use(cors());
 app.use(express.json());
 
 // Rutas
+app.use("/api/login", loginRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/attendances", attendanceRoutes);
 app.use("/api/users", userRoutes);

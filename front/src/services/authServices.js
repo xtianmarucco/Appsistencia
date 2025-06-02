@@ -1,31 +1,20 @@
-import { supabase } from '../lib/supabaseClient';
-
 export const login = async (email, password) => {
-  try {
-    // Consulta la tabla "users" para encontrar un usuario con el email proporcionado
-    const { data, error } = await supabase
-      .from('users')
-      .select('id, email, role, user_otp_configured, password')       .eq('email', email)
-      .single(); // Espera un solo resultado
+  const response = await fetch("http://localhost:3000/api/auth/login", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ email, password })
+  });
 
-    if (error) {
-      throw error;
-    }
-
-    // Verifica si el usuario existe y si la contraseña coincide
-    if (!data || data.password !== password) {
-      throw new Error('Credenciales inválidas');
-    }
-
-    // Devuelve los datos del usuario si la autenticación es exitosa
-    return data;
-  } catch (error) {
-    console.error('Error durante el inicio de sesión:', error.message);
-    throw error;
+  if (!response.ok) {
+    const { error } = await response.json();
+    throw new Error(error || "Error de autenticación");
   }
+  return response.json();
 };
-
-export const logout = () => {
-  // Simplemente limpiamos el estado del usuario (lo manejaremos en Redux)
-  return Promise.resolve();
+export const logout = async () => {
+  // Aquí podrías implementar la lógica de cierre de sesión si es necesario
+  // Por ejemplo, eliminar el token del almacenamiento local o cookies
+  return { message: "Sesión cerrada correctamente" };
 };

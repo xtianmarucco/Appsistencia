@@ -3,7 +3,7 @@ import { createUser, updateUser } from "../services/userService";
 import UserTable from "../components/user-table/UserTable";
 import UserFormModal from "../components/user-form-modal/UserFormModal";
 import NotificationModal from "../components/notification-modal/NotificationModal";
-import Navbar from "../components/navbar/navbar";
+import Navbar from "../components/navbar/Navbar";
 
 const AdminDashboard = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);

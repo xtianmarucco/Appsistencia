@@ -1,17 +1,14 @@
-import supabase from "../lib/supabaseClient.js";
-import { v4 as uuidv4 } from "uuid"; // Para generar UUIDs únicos
+import pool from "../database.js";
+import { v4 as uuidv4 } from "uuid";
 import { authenticator } from "otplib";
 
 // ✅ Obtener todos los usuarios
 export const getUsers = async (req, res) => {
   try {
-    const { data, error } = await supabase
-      .from("users")
-      .select("id, name, lastname, email, role, hourly_wage, active");
-
-    if (error) throw error;
-
-    res.json(data);
+    const result = await pool.query(
+      "SELECT id, name, lastname, email, role, hourly_wage, active FROM users"
+    );
+    res.json(result.rows);
   } catch (error) {
     console.error("❌ Error al obtener usuarios:", error);
     res.status(500).json({ error: "Error al obtener usuarios" });
@@ -22,16 +19,14 @@ export const getUsers = async (req, res) => {
 export const getUserById = async (req, res) => {
   try {
     const { id } = req.params;
-
-    const { data, error } = await supabase
-      .from("users")
-      .select("id, name, lastname, email, role, hourly_wage, active")
-      .eq("id", id)
-      .single();
-
-    if (error) throw error;
-
-    res.json(data);
+    const result = await pool.query(
+      "SELECT id, name, lastname, email, role, hourly_wage, active FROM users WHERE id = $1",
+      [id]
+    );
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: "Usuario no encontrado" });
+    }
+    res.json(result.rows[0]);
   } catch (error) {
     console.error("❌ Error al obtener usuario:", error);
     res.status(500).json({ error: "Error al obtener usuario" });
@@ -39,44 +34,43 @@ export const getUserById = async (req, res) => {
 };
 
 // ✅ Crear un nuevo usuario
-
 export const createUser = async (req, res) => {
   try {
     const { name, lastname, email, id_number, role, hourly_wage, password, active = true } = req.body;
-
     if (!name || !lastname || !email || !role || !password) {
       return res.status(400).json({ error: "Faltan campos obligatorios." });
     }
 
-    // 🔥 Generar automáticamente el `otp_secret`
     const otpSecret = authenticator.generateSecret();
+    const id = uuidv4();
 
-    const { data, error } = await supabase.from("users").insert([
-      {
-        id: uuidv4(),
+    const result = await pool.query(
+      `INSERT INTO users (
+        id, name, lastname, email, id_number, role, hourly_wage, created_at, active, password, otp_secret, user_otp_configured
+      ) VALUES (
+        $1, $2, $3, $4, $5, $6, $7, NOW(), $8, $9, $10, $11
+      ) RETURNING *`,
+      [
+        id,
         name,
         lastname,
         email,
-        id_number: id_number || null,
+        id_number || null,
         role,
-        hourly_wage: hourly_wage || 0,
-        created_at: new Date().toISOString(),
+        hourly_wage || 0,
         active,
-        password, // ⚠️ Importante: Debería ser encriptada en producción
-        otp_secret: otpSecret, // 🔥 Se genera automáticamente
-        user_otp_configured: false // 🔹 Todavía no ha sido vinculado con la app de autenticación
-      }
-    ]).select();
+        password,
+        otpSecret,
+        false
+      ]
+    );
 
-    if (error) throw error;
-
-    res.status(201).json({ message: "Usuario creado con éxito.", user: data[0] });
+    res.status(201).json({ message: "Usuario creado con éxito.", user: result.rows[0] });
   } catch (error) {
     console.error("❌ Error al crear usuario:", error);
     res.status(500).json({ error: "Error al crear usuario." });
   }
 };
-
 
 // ✅ Editar usuario
 export const updateUser = async (req, res) => {
@@ -84,27 +78,29 @@ export const updateUser = async (req, res) => {
     const { id } = req.params;
     const { name, lastname, email, role, hourly_wage, active } = req.body;
 
-    // 📌 Validación de datos
     if (!name || !lastname || !email || !role) {
-      return res
-        .status(400)
-        .json({ error: "Todos los campos son obligatorios" });
+      return res.status(400).json({ error: "Todos los campos son obligatorios" });
     }
 
-    // 📌 Actualizar usuario
-    const { data, error } = await supabase
-      .from("users")
-      .update({
+    const result = await pool.query(
+      `UPDATE users
+      SET name=$1, lastname=$2, email=$3, role=$4, hourly_wage=$5, active=$6
+      WHERE id=$7
+      RETURNING *`,
+      [
         name,
         lastname,
         email,
         role,
-        hourly_wage: role === "employee" ? hourly_wage : null,
+        role === "employee" ? hourly_wage : null,
         active,
-      })
-      .eq("id", id);
+        id
+      ]
+    );
 
-    if (error) throw error;
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: "Usuario no encontrado" });
+    }
 
     res.json({ message: "Usuario actualizado con éxito" });
   } catch (error) {
@@ -117,11 +113,10 @@ export const updateUser = async (req, res) => {
 export const deleteUser = async (req, res) => {
   try {
     const { id } = req.params;
-
-    // 📌 Eliminar usuario por ID
-    const { error } = await supabase.from("users").delete().eq("id", id);
-
-    if (error) throw error;
+    const result = await pool.query(
+      "DELETE FROM users WHERE id = $1",
+      [id]
+    );
 
     res.json({ message: "Usuario eliminado con éxito" });
   } catch (error) {
@@ -130,143 +125,58 @@ export const deleteUser = async (req, res) => {
   }
 };
 
-// Obtener usuarios con horas trabajadas
+// ✅ Usuarios con horas trabajadas en un período (versión simple, ajustable según tus necesidades)
 export const getUsersWithHours = async (req, res) => {
   try {
-    // 🔹 Obtener todos los usuarios
-    const { data: users, error: userError } = await supabase
-      .from("users")
-      .select("id, name, lastname, role, email");
-
-    if (userError) {
-      throw userError;
+    const { startDate, endDate } = req.query;
+    if (!startDate || !endDate) {
+      return res.status(400).json({ error: "Debe proporcionar un rango de fechas." });
     }
 
-    // 🔥 Obtener registros de asistencia
-    const { data: attendances, error: attendanceError } = await supabase
-      .from("attendances")
-      .select("user_id, work_session_id, action, timestamp")
-      .order("timestamp", { ascending: true });
-
-    if (attendanceError) {
-      console.error("❌ Error obteniendo asistencias:", attendanceError);
-      throw attendanceError;
-    }
-
-    console.log(
-      "🧐 Datos obtenidos de attendances desde Supabase:",
-      attendances
+    // 1. Traer usuarios
+    const usersResult = await pool.query(
+      "SELECT id, name, lastname, role, email FROM users"
     );
+    const users = usersResult.rows;
 
-    if (!attendances || attendances.length === 0) {
-      console.log("❌ No hay datos de asistencia.");
-      return res.json({
-        message: "No data found",
-        hoursLast7Days: "0.00",
-        hoursLast15Days: "0.00",
-        hoursLast30Days: "0.00",
-      });
-    }
-
-    // 🔹 Obtener la última fecha registrada en la DB como referencia
-    const latestRecord = new Date(
-      attendances[attendances.length - 1].timestamp
+    // 2. Traer attendances en rango
+    const attendancesResult = await pool.query(
+      `SELECT user_id, work_session_id, action, timestamp
+       FROM attendances
+       WHERE timestamp BETWEEN $1 AND $2
+       ORDER BY timestamp ASC`,
+      [startDate, endDate]
     );
-    console.log("📆 Última fecha registrada en la DB:", latestRecord);
+    const attendances = attendancesResult.rows;
 
-    // 🔹 Definir rangos de fechas en función de la última fecha registrada
-    const last7Days = new Date(latestRecord);
-    last7Days.setDate(latestRecord.getDate() - 7);
-
-    const last15Days = new Date(latestRecord);
-    last15Days.setDate(latestRecord.getDate() - 15);
-
-    const last30Days = new Date(latestRecord);
-    last30Days.setDate(latestRecord.getDate() - 30);
-
-    console.log("📆 Fechas corregidas basadas en la última fecha en la DB:");
-    console.log("🔹 Últimos 7 días desde:", last7Days);
-    console.log("🔹 Últimos 15 días desde:", last15Days);
-    console.log("🔹 Últimos 30 días desde:", last30Days);
-
-    // 🔹 Agrupar registros por usuario y sesión de trabajo
-    const groupedAttendances = {};
-    attendances.forEach((record) => {
-      if (!groupedAttendances[record.user_id]) {
-        groupedAttendances[record.user_id] = {};
-      }
-
-      if (!groupedAttendances[record.user_id][record.work_session_id]) {
-        groupedAttendances[record.user_id][record.work_session_id] = {
-          checkin: null,
-          checkout: null,
-        };
-      }
-
+    // 3. Agrupar y calcular horas
+    const grouped = {};
+    attendances.forEach(record => {
+      if (!grouped[record.user_id]) grouped[record.user_id] = {};
+      if (!grouped[record.user_id][record.work_session_id])
+        grouped[record.user_id][record.work_session_id] = { checkin: null, checkout: null };
       if (record.action === "check-in") {
-        groupedAttendances[record.user_id][record.work_session_id].checkin =
-          new Date(record.timestamp);
+        grouped[record.user_id][record.work_session_id].checkin = new Date(record.timestamp);
       } else if (record.action === "check-out") {
-        groupedAttendances[record.user_id][record.work_session_id].checkout =
-          new Date(record.timestamp);
+        grouped[record.user_id][record.work_session_id].checkout = new Date(record.timestamp);
       }
     });
 
-    console.log(
-      "📊 Registros agrupados por usuario y sesión:",
-      groupedAttendances
-    );
-
-    // 🔥 Función para calcular horas trabajadas en un período
-    const getTotalHours = (userId, dateLimit) => {
-      const userSessions = groupedAttendances[userId] || {};
-
-      console.log(
-        `🧐 Revisando sesiones de trabajo del usuario ${userId} desde ${dateLimit}`
-      );
-
-      return Object.values(userSessions)
-        .filter((session) => session.checkin && session.checkout) // 🔥 Asegurar que haya ambos registros
-        .filter((session) => {
-          const checkinTime = new Date(session.checkin);
-          return checkinTime >= dateLimit;
-        }) // 🔥 Solo contar sesiones dentro del rango
-        .map((session) => {
-          const checkinTime = new Date(session.checkin);
-          const checkoutTime = new Date(session.checkout);
-
-          if (checkoutTime > checkinTime) {
-            const workedHours = (checkoutTime - checkinTime) / (1000 * 60 * 60);
-            console.log(
-              `✅ Sesión válida - Check-in: ${checkinTime}, Check-out: ${checkoutTime}, Horas trabajadas: ${workedHours}`
-            );
-            return workedHours;
-          } else {
-            console.warn(
-              `⚠️ Error en sesión: Check-in (${checkinTime}) ocurre después de Check-out (${checkoutTime})`
-            );
-            return 0;
-          }
-        })
-        .reduce((total, sessionHours) => total + sessionHours, 0)
+    // 4. Mapear usuarios con sus horas trabajadas
+    const usersWithHours = users.map(user => {
+      const userSessions = grouped[user.id] || {};
+      const totalHours = Object.values(userSessions)
+        .filter(session => session.checkin && session.checkout)
+        .map(session => (session.checkout - session.checkin) / (1000 * 60 * 60))
+        .reduce((total, hoursWorked) => total + hoursWorked, 0)
         .toFixed(2);
-    };
 
-    // 🔹 Calcular horas trabajadas por usuario en cada período
-    const usersWithHours = users.map((user) => ({
-      ...user,
-      hoursLast7Days: getTotalHours(user.id, last7Days),
-      hoursLast15Days: getTotalHours(user.id, last15Days),
-      hoursLast30Days: getTotalHours(user.id, last30Days),
-    }));
-
-    console.log("✅ Horas trabajadas calculadas:", usersWithHours);
+      return { ...user, totalHours };
+    });
 
     res.json(usersWithHours);
   } catch (error) {
     console.error("❌ Error al obtener usuarios con horas trabajadas:", error);
-    res
-      .status(500)
-      .json({ error: "Error al obtener usuarios con horas trabajadas" });
+    res.status(500).json({ error: "Error al obtener usuarios con horas trabajadas" });
   }
 };
