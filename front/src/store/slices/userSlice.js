@@ -1,11 +1,14 @@
+// userSlice.js
 import { createSlice } from "@reduxjs/toolkit";
+import { loginUser } from "../../thunks/loginThunk"; // <-- Importá el thunk (deberás crearlo con el nombre correcto)
 
 const initialState = {
   user: null,
   role: null,
   user_otp_configured: false,
-  showOtpModal: false, // 🔥 Aseguramos que está en el estado inicial
+  showOtpModal: false,
   isLoading: false,
+  error: null, // <-- Agregado para manejar errores de login
 };
 
 const userSlice = createSlice({
@@ -16,21 +19,19 @@ const userSlice = createSlice({
       state.user = action.payload;
       state.role = action.payload.role;
       state.user_otp_configured = action.payload.user_otp_configured;
-     
+      state.error = null;
     },
     setUserOtpConfigured: (state, action) => {
       state.user_otp_configured = action.payload;
     },
     showOtpValidationModal: (state) => {
-      console.log("🚀 Activando showOtpModal en Redux");
       state.showOtpModal = true;
     },
     hideOtpValidationModal: (state) => {
-      console.log("🛑 Ocultando showOtpModal en Redux");
       state.showOtpModal = false;
-    },setLoading: (state, action) => {
-      console.log("🛠 Reducer setLoading ejecutado con:", action.payload);
-      state.isLoading = action.payload; // 🔥 Maneja la carga globalmente
+    },
+    setLoading: (state, action) => {
+      state.isLoading = action.payload;
     },
     logoutUser: (state) => {
       state.user = null;
@@ -38,8 +39,26 @@ const userSlice = createSlice({
       state.user_otp_configured = false;
       state.showOtpModal = false;
       state.isLoading = false;
-
+      state.error = null;
     },
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(loginUser.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(loginUser.fulfilled, (state, action) => {
+        state.user = action.payload;
+        state.role = action.payload.role;
+        state.user_otp_configured = action.payload.user_otp_configured;
+        state.isLoading = false;
+        state.error = null;
+      })
+      .addCase(loginUser.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload || "Error al iniciar sesión";
+      });
   },
 });
 

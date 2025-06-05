@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { logoutUser } from '../../thunks/authThunks';
+import { logoutUser } from '../../thunks/loginThunk';
 import { useNavigate } from 'react-router-dom';
 
 const Navbar = () => {

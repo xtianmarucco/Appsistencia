@@ -1,13 +1,15 @@
 /* eslint-disable react/prop-types */
 import { useState } from 'react';
 
-const LoginForm = ({ onSubmit, error }) => {
+const LoginForm = ({ onSubmit, error, isLoading }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSubmit({ email, password });
+    if (!isLoading) {
+      onSubmit({ email, password });
+    }
   };
 
   return (
@@ -21,6 +23,7 @@ const LoginForm = ({ onSubmit, error }) => {
           onChange={(e) => setEmail(e.target.value)}
           className="w-full p-2 border border-neutral rounded text-primary-text bg-white"
           required
+          disabled={isLoading}
         />
       </div>
       <div className="mb-4">
@@ -32,14 +35,26 @@ const LoginForm = ({ onSubmit, error }) => {
           onChange={(e) => setPassword(e.target.value)}
           className="w-full p-2 border border-neutral rounded text-primary-text bg-white"
           required
+          disabled={isLoading}
         />
       </div>
-      {error && <p className="text-error mb-4">{error}</p>}
+      {error && <p className="text-red-500 mb-4">{error}</p>}
       <button
         type="submit"
-        className="px-4 py-2 bg-blue-400 text-white rounded"
+        className={`px-4 py-2 bg-blue-400 text-white rounded w-full transition-opacity duration-200 ${isLoading ? "opacity-60 cursor-not-allowed" : ""}`}
+        disabled={isLoading}
       >
-        Iniciar Sesión
+        {isLoading ? (
+          <span>
+            <svg className="inline w-4 h-4 mr-2 animate-spin" viewBox="0 0 24 24">
+              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none"></circle>
+              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4l3-3-3-3v4a8 8 0 108 8h-4l3 3 3-3h-4a8 8 0 01-8-8z" />
+            </svg>
+            Iniciando...
+          </span>
+        ) : (
+          "Iniciar Sesión"
+        )}
       </button>
     </form>
   );
