@@ -10,9 +10,7 @@ export default function UserCard({ user, period }) {
 
   console.log("🎯 Datos en UserCard:", user);
 
-  // console.log("🧐 Usuario:", user);
-  // console.log("📅 Período seleccionado:", period);
-  // console.log("⏳ Horas trabajadas:", user[period]);
+  
 
   return (
     <div className="bg-white p-4 rounded-lg shadow-md flex items-center space-x-4">
@@ -24,7 +22,7 @@ export default function UserCard({ user, period }) {
           {user.role}
         </p>
         <p className="text-gray-700 flex items-center">
-          ⏳ {user[period]} horas trabajadas
+          ⏳ {user.totalHours} horas trabajadas
         </p>
       </div>
     </div>

@@ -19,7 +19,7 @@ const Login = () => {
       } else {
         // Si no tiene OTP configurado lo mandás a setup, si sí lo tiene lo mandás al dashboard/checkin
         if (user.user_otp_configured) {
-          navigate("/checkin-out");
+          navigate("/check-in-out");
         } else {
           navigate("/setup-otp");
         }
