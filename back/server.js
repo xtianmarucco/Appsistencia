@@ -5,13 +5,14 @@ import loginRoutes from "./routes/loginRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
 import attendanceRoutes from "./routes/attendanceRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
-
+import userDetailRoutes from './routes/userDetailRoutes.js';
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
 // Rutas
+app.use("/api/users", userDetailRoutes);
 app.use("/api/login", loginRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/attendances", attendanceRoutes);

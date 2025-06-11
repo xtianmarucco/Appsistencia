@@ -6,6 +6,7 @@ import EmployeeDashboard from "../pages/EmployeeDashboardPage";
 import SetupOtpPage from "../pages/SetupOtpPage";
 import CheckInOutPage from "../pages/CheckInOutPage";
 import UserListPage from "../pages/UserListPage";
+import UserDetailPage from "../pages/UserDetailPage";
 
 
 export default function AppRoutes() {
@@ -17,6 +18,14 @@ export default function AppRoutes() {
         element={
           <PrivateRoute requiredRole="admin">
             <AdminDashboard />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/user-detail/:id"
+        element={
+          <PrivateRoute requiredRole="admin">
+            <UserDetailPage />
           </PrivateRoute>
         }
       />

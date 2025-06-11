@@ -64,8 +64,9 @@ const AdminDashboard = () => {
     <>
       <Navbar className="bg-color-secondary" />
       <div className="p-4 text-primary-text">
-        <h1 className="text-2xl font-bold">Panel de Administrador</h1>
         <div className="p-6">
+        <h1 className="text-2xl mb-6 font-bold">Panel de Administrador</h1>
+       
           <button
             className="bg-green-500 text-white px-4 py-2 rounded mb-4"
             onClick={() => {
