@@ -7,8 +7,7 @@ export default function CheckInOutModal({ isOpen, type, onClose, timestamp }) {
   const formattedTime = timestamp
     ? new Date(timestamp).toLocaleTimeString("es-ES", {
         hour: "2-digit",
-        minute: "2-digit",
-        second: "2-digit",
+        minute: "2-digit", 
         timeZoneName: "short",
       })
     : "N/A";

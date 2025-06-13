@@ -2,7 +2,7 @@ import pool from "../database.js";
 import { v4 as uuidv4 } from "uuid";
 import { DateTime } from "luxon";
 
-// Obtener registros de asistencia de un usuario
+// ✅ Obtener registros de asistencia de un usuario
 export const getAttendances = async (req, res) => {
   try {
     const { user_id } = req.query;
@@ -10,7 +10,7 @@ export const getAttendances = async (req, res) => {
       return res.status(400).json({ error: "Falta user_id en la consulta." });
     }
 
-    // PostgreSQL query
+    // 🚩 Traer registros ordenados por fecha
     const result = await pool.query(
       `SELECT id, user_id, work_session_id, action, timestamp
        FROM attendances
@@ -19,10 +19,10 @@ export const getAttendances = async (req, res) => {
       [user_id]
     );
 
-    // Convertir la fecha a horario local de Argentina
+    // 🚩 Convertir la fecha UTC de la DB a hora local de Argentina SOLO PARA MOSTRAR
     const attendancesWithLocalTime = result.rows.map((record) => ({
       ...record,
-      timestamp_local: DateTime.fromISO(record.timestamp, { zone: "utc" })
+      timestamp_local: DateTime.fromJSDate(record.timestamp, { zone: "utc" })
         .setZone("America/Argentina/Buenos_Aires")
         .toFormat("yyyy-MM-dd HH:mm:ss"),
     }));
@@ -35,21 +35,20 @@ export const getAttendances = async (req, res) => {
 };
 
 
-// Check-in y check-out automático
+// ✅ Registrar check-in/check-out usando la hora de Argentina → guardada como UTC
 export const checkInOut = async (req, res) => {
   try {
     const { user_id } = req.body;
-
     if (!user_id) {
       return res.status(400).json({ error: "Falta user_id en la solicitud." });
     }
 
-    // Hora actual en Argentina → UTC
-    const now = DateTime.now().setZone("America/Argentina/Buenos_Aires");
-    const nowUTC = now.toUTC().toISO();
+    // 1. 🔥 Tomamos la hora actual en Buenos Aires, y la convertimos a UTC (esto es lo que se guarda)
+    const nowBuenosAires = DateTime.now().setZone("America/Argentina/Buenos_Aires");
+    const nowUTC = nowBuenosAires.toUTC().toJSDate(); // ← Guardar como objeto Date
 
-    // Buscar el check-in más reciente dentro de las últimas 24 horas
-    const last24Hours = now.minus({ hours: 24 }).toUTC().toISO();
+    // 2. Chequear si hay un check-in en las últimas 24h
+    const last24Hours = nowBuenosAires.minus({ hours: 24 }).toUTC().toJSDate();
 
     const checkinResult = await pool.query(
       `SELECT id, work_session_id, timestamp
@@ -64,29 +63,27 @@ export const checkInOut = async (req, res) => {
     const recentCheckin = checkinResult.rows[0];
 
     if (recentCheckin) {
-      // Si hay check-in reciente, registrar check-out
+      // Registrar check-out con la MISMA sesión
       await pool.query(
         `INSERT INTO attendances (id, user_id, work_session_id, action, timestamp)
          VALUES ($1, $2, $3, $4, $5)`,
         [uuidv4(), user_id, recentCheckin.work_session_id, "check-out", nowUTC]
       );
-
       return res.json({
         message: "Check-out registrado correctamente",
-        timestamp: nowUTC,
+        timestamp: nowBuenosAires.toFormat("dd-MM-yyyy HH:mm:ss"), // ← Mostramos la hora local
       });
     } else {
-      // Si no hay check-in reciente, registrar un nuevo check-in
+      // Registrar check-in NUEVO
       const newWorkSessionId = uuidv4();
       await pool.query(
         `INSERT INTO attendances (id, user_id, work_session_id, action, timestamp)
          VALUES ($1, $2, $3, $4, $5)`,
         [uuidv4(), user_id, newWorkSessionId, "check-in", nowUTC]
       );
-
       return res.json({
         message: "Check-in registrado correctamente",
-        timestamp: nowUTC,
+        timestamp: nowBuenosAires.toFormat("yyyy-MM-dd HH:mm:ss"),
       });
     }
   } catch (error) {
@@ -96,12 +93,12 @@ export const checkInOut = async (req, res) => {
 };
 
 
-// Saber si ya hizo check-in (últimas 24h)
+// ✅ Saber si ya hizo check-in (últimas 24h)
 export const getCheckInStatus = async (req, res) => {
   try {
     const { user_id } = req.params;
-    const now = DateTime.now().setZone("America/Argentina/Buenos_Aires");
-    const last24Hours = now.minus({ hours: 24 }).toUTC().toISO();
+    const nowBuenosAires = DateTime.now().setZone("America/Argentina/Buenos_Aires");
+    const last24Hours = nowBuenosAires.minus({ hours: 24 }).toUTC().toJSDate();
 
     const result = await pool.query(
       `SELECT id
