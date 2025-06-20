@@ -1,5 +1,7 @@
 import { useMemo } from "react";
 import { FcBriefcase } from "react-icons/fc";
+import { useNavigate } from "react-router-dom";
+
 // import { FcAssistant } from "react-icons/fc";
 
 export default function UserCard({ user, period }) {
@@ -10,10 +12,13 @@ export default function UserCard({ user, period }) {
 
   console.log("🎯 Datos en UserCard:", user);
 
-  
+    const navigate = useNavigate();
+
 
   return (
-    <div className="bg-white p-4 rounded-lg shadow-md flex items-center space-x-4">
+    <div className="bg-white p-4 rounded-lg shadow-md flex items-center space-x-4"
+     onClick={() => navigate(`/user-calendar/${user.id}`)}
+    >
       <span className="text-4xl">{emoji}</span>
       <div>
         <h3 className="text-lg font-bold">{user.name}</h3>

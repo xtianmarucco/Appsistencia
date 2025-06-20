@@ -2,6 +2,8 @@
 @import "tailwindcss";
 @import "react-datepicker/dist/react-datepicker.css";
 
+
+
 :root {
   --color-primary: #fff;              /* Fondo principal */
   --color-primary-text: #312f6a;      /* Texto principal */

@@ -7,7 +7,7 @@ import SetupOtpPage from "../pages/SetupOtpPage";
 import CheckInOutPage from "../pages/CheckInOutPage";
 import UserListPage from "../pages/UserListPage";
 import UserDetailPage from "../pages/UserDetailPage";
-
+import UserCalendarPage from "../pages/UserCalendarPage";
 
 export default function AppRoutes() {
   return (
@@ -38,6 +38,14 @@ export default function AppRoutes() {
         }
       />
       <Route
+        path="/user-calendar/:userId"
+        element={
+          <PrivateRoute requiredRole="admin">
+            <UserCalendarPage />
+          </PrivateRoute>
+        }
+      />
+      <Route
         path="/employee"
         element={
           <PrivateRoute requiredRole="employee">
@@ -45,6 +53,7 @@ export default function AppRoutes() {
           </PrivateRoute>
         }
       />
+      
       <Route
         path="/setup-otp"
         element={

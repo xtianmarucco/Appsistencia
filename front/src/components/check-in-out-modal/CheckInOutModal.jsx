@@ -1,5 +1,3 @@
-import React from "react";
-
 export default function CheckInOutModal({ isOpen, type, onClose, timestamp }) {
   if (!isOpen) return null;
 
@@ -7,8 +5,7 @@ export default function CheckInOutModal({ isOpen, type, onClose, timestamp }) {
   const formattedTime = timestamp
     ? new Date(timestamp).toLocaleTimeString("es-ES", {
         hour: "2-digit",
-        minute: "2-digit", 
-        timeZoneName: "short",
+        minute: "2-digit",
       })
     : "N/A";
 

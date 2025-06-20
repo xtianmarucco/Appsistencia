@@ -66,3 +66,48 @@ export const getUserStats = async (req, res) => {
     return res.status(500).json({ error: "Error al obtener stats del usuario" });
   }
 };
+// GET /api/users/:id/attendances?start=YYYY-MM-DD&end=YYYY-MM-DD
+
+export const getUserAttendances = async (req, res) => {
+  const { id } = req.params;
+  const { start, end } = req.query; // Fechas en formato ISO
+
+  if (!id || !start || !end) {
+    return res.status(400).json({ error: "Faltan parámetros" });
+  }
+
+  try {
+    const result = await pool.query(
+      `SELECT id, work_session_id, action, timestamp
+         FROM attendances
+         WHERE user_id = $1
+           AND timestamp >= $2
+           AND timestamp <= $3
+         ORDER BY timestamp ASC`,
+      [id, start, end]
+    );
+
+    // Agrupar por work_session_id (para armar eventos de calendario)
+    const sessions = {};
+    result.rows.forEach((row) => {
+      if (!sessions[row.work_session_id]) {
+        sessions[row.work_session_id] = {};
+      }
+      sessions[row.work_session_id][row.action] = row.timestamp;
+    });
+
+    // Convertir a un array de eventos para el frontend
+    const events = Object.values(sessions)
+      .filter((s) => s["check-in"] && s["check-out"])
+      .map((s) => ({
+        start: DateTime.fromISO(s["check-in"]).toISO(),
+        end: DateTime.fromISO(s["check-out"]).toISO(),
+        title: "Turno trabajado",
+      }));
+
+    res.json(events);
+  } catch (error) {
+    console.error("❌ Error fetching attendances:", error);
+    res.status(500).json({ error: "Error obteniendo turnos del usuario" });
+  }
+};
