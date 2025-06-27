@@ -62,7 +62,7 @@ const AdminDashboard = () => {
 
   return (
     <>
-      <Navbar className="bg-color-secondary" />
+    <Navbar/>
       <div className="p-4 text-primary-text">
         <div className="p-6">
         <h1 className="text-2xl mb-6 font-bold">Panel de Administrador</h1>

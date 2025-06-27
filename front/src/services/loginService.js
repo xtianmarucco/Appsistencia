@@ -1,6 +1,6 @@
 // src/services/loginService.js
 
-const API_URL = "http://localhost:3000/api/login";
+const API_URL = `${import.meta.env.VITE_API_URL}/api/login`;
 
 /**
  * Hace login usando el backend. Devuelve los datos del usuario si es correcto, sino lanza error.

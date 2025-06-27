@@ -7,7 +7,7 @@ services:
       POSTGRES_PASSWORD: supersecret
       POSTGRES_DB: appsistencia
     ports:
-      - "5433:5432"   # Expone 5433 en tu máquina, 5432 en el contenedor
+      - "5433:5432"
     volumes:
       - db_data:/var/lib/postgresql/data
 
@@ -24,6 +24,13 @@ services:
       - "3000:3000"
     depends_on:
       - db
+
+  frontend:
+    build: ./front
+    ports:
+      - "8080:80"
+    depends_on:
+      - backend
 
 volumes:
   db_data:

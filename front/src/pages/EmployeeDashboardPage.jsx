@@ -1,5 +1,5 @@
 // import UserList from "../components/usersList";
-import Navbar from "../components/navbar/navbar";
+import Navbar from "../components/navbar/Navbar";
 
 const EmployeeDashboard = () => {
   return (

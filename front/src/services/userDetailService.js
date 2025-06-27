@@ -7,7 +7,7 @@
  */
 export const fetchUserStats = async (userId) => {
   // 🔹 Armamos la URL del endpoint del backend
-  const url = `http://localhost:3000/api/users/${userId}/stats`;
+  const url = `${import.meta.env.VITE_API_URL}/api/users/${userId}/stats`;
 
   // 🔹 Hacemos la petición al backend
   const response = await fetch(url);

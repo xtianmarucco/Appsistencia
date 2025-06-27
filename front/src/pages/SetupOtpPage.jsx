@@ -4,7 +4,7 @@ import { setUser } from "../store/slices/userSlice";
 import QrSetup from "../components/qr-generator/QrSetup";
 import OtpValidation from "../components/otp-validator/OtpValidationA";
 import OtpLoginValidation from "../components/otp-login-validation/OtpLoginValidation";
-import Navbar from "../components/navbar/navbar";
+import Navbar from "../components/navbar/Navbar";
 
 // Assuming hideOtpValidationModal is an action from a Redux slice
 import { hideOtpValidationModal } from "../store/slices/userSlice";
