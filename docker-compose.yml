@@ -1,0 +1,29 @@
+version: '3.9'
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: supersecret
+      POSTGRES_DB: appsistencia
+    ports:
+      - "5433:5432"   # Expone 5433 en tu máquina, 5432 en el contenedor
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+  backend:
+    build: ./back
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_USER: postgres
+      DB_PASSWORD: supersecret
+      DB_NAME: appsistencia
+      DATABASE_URL: postgres://postgres:supersecret@db:5432/appsistencia
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+
+volumes:
+  db_data:

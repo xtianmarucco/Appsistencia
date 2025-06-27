@@ -14,7 +14,7 @@ const Navbar = () => {
       navigate('/login'); // Redirige al usuario a la página de login
     });
   };
-
+console.log(user.name);
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
   };
@@ -28,12 +28,18 @@ const Navbar = () => {
       </div>
 
       {/* Dropdown del usuario */}
+      <div className="flex items-center space-x-4">
+        <button
+          onClick={() => navigate('/dashboard')} // Redirige al dashboard
+          className="text-primary-text hover:text-primary-dark"
+>holi</button>
+</div>
       <div className="relative">
         <button
           onClick={toggleDropdown}
           className="flex items-center space-x-2 focus:outline-none"
         >
-          <span>{user?.username}</span> {/* Nombre del usuario */}
+          <span>{user?.name}</span> {/* Nombre del usuario */}
           <span>👤</span> {/* Icono de usuario */}
         </button>
 
