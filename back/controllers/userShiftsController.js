@@ -29,7 +29,7 @@ export const getUserShifts = async (req, res) => {
     const shifts = Object.values(sessions)
       .filter(s => s["check-in"] && s["check-out"]) // Solo sesiones completas
       .map(s => ({
-        title: "Turno trabajado",
+        title: "Turno",
         start: s["check-in"],
         end: s["check-out"],
       }));
