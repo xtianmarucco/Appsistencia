@@ -1,28 +1,22 @@
-import { authenticator } from 'otplib';
+// services/otpService.js
 
-// 🔒 (Opcional, pero recomendado): Mueve la generación del secreto y el QR al backend para mayor seguridad
-// Si prefieres generarlo en el front, puedes dejar esto:
-export const generateOTPSecret = () => {
-  return authenticator.generateSecret();
-};
+// Ya NO necesitas ni usar otplib ni generar secretos aquí
+// ¡TODO lo maneja el backend!
 
-export const generateOTPAuthURI = (email, secret) => {
-  return authenticator.keyuri(email, 'Appsistencia', secret);
-};
-
-// 🔗 Guarda el secreto OTP llamando a tu endpoint del backend
-export const saveOTPSecret = async (userId, secret) => {
+// 🔗 Llama al backend para generar y guardar el secreto y obtener la URI del QR
+export const setupOtp = async (userId) => {
   const response = await fetch(`http://localhost:3000/api/auth/setup-otp`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ user_id: userId, otp_secret: secret }),
+    body: JSON.stringify({ user_id: userId }),
   });
 
   if (!response.ok) {
     const data = await response.json();
-    throw new Error(data.error || "Error al guardar OTP");
+    throw new Error(data.error || "Error al generar OTP");
   }
-  // Puedes retornar el resultado si tu endpoint lo da (por ejemplo, el QR URI)
+
+  // El backend devuelve { secret, otpAuthUrl }
   return await response.json();
 };
 

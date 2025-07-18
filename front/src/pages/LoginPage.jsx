@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { loginUser } from "../thunks/loginThunk";
 import LoginForm from "../components/login-form/LoginForm";
+import Loader from "../components/loader/Loader";
 
 const Login = () => {
   const dispatch = useDispatch();
@@ -33,14 +34,12 @@ const Login = () => {
   };
 
   return (
-    <div className="p-4 bg-primary text-primary-text">
-      <h1 className="text-2xl font-bold">Iniciar Sesión</h1>
-    <LoginForm onSubmit={handleLogin} error={error} isLoading={isLoading} />
-
-      {/* Mostrar error global si existe */}
-      {error && <p className="text-red-600 mt-2">{error}</p>}
-      {/* Mostrar loading si está cargando */}
-      {isLoading && <p className="text-gray-400">Cargando...</p>}
+    <div className="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-800 via-blue-500 to-cyan-400 text-primary-text">
+      <Loader />
+      <div className="flex flex-col items-center w-full">
+        <nav className="w-full p-4 text-white"></nav>
+        <LoginForm onSubmit={handleLogin} error={error} isLoading={isLoading} />
+      </div>
     </div>
   );
 };

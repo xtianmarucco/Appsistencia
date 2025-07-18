@@ -1,10 +1,10 @@
+// controllers/authController.js
 import pool from "../database.js";
 import { authenticator } from "otplib";
 
 // POST /api/auth/setup-otp
 export const setupOtp = async (req, res) => {
   const { user_id } = req.body;
-
   if (!user_id) return res.status(400).json({ error: "Falta user_id" });
 
   const secret = authenticator.generateSecret();
@@ -14,9 +14,8 @@ export const setupOtp = async (req, res) => {
       "UPDATE users SET otp_secret = $1, user_otp_configured = false WHERE id = $2",
       [secret, user_id]
     );
-    // Devuelve solo el URI para generar el QR en el front
     const otpAuthUrl = authenticator.keyuri(user_id, "Appsistencia", secret);
-    return res.json({ otpAuthUrl });
+    return res.json({ secret, otpAuthUrl });
   } catch (error) {
     return res.status(500).json({ error: "Error al guardar OTP en la base de datos" });
   }

@@ -1,42 +1,31 @@
 import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { QRCodeCanvas } from "qrcode.react";
-import { generateOTPAuthURI } from "../../services/otpService";
+import { setupOtp } from "../../services/otpService";
 
+// Asegúrate de que esta ruta sea correcta
 export default function QrSetup({ onScanned }) {
   const user = useSelector((state) => state.user.user);
   const [otpUri, setOtpUri] = useState(null);
 
   useEffect(() => {
-    const fetchOtpSecret = async () => {
+    const fetchOtpUri = async () => {
       if (!user) return;
-
       try {
-        const response = await fetch("http://localhost:3000/api/auth/setup-otp", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ user_id: user.id }),
-        });
-
-        const data = await response.json();
-        console.log("📥 Respuesta del servidor en QrSetup:", data);
-
-        if (!data.secret) {
-          throw new Error("No se recibió una clave secreta para OTP.");
-        }
-
-        setOtpUri(generateOTPAuthURI(user.email, data.secret));
+        const { otpAuthUrl } = await setupOtp(user.id);
+        setOtpUri(otpAuthUrl);
       } catch (error) {
-        console.error("❌ Error al obtener el secreto OTP:", error);
+        console.error("❌ Error al obtener la URL del QR:", error);
       }
     };
-
-    fetchOtpSecret();
+    fetchOtpUri();
   }, [user]);
 
   return (
     <div className="flex flex-col items-center">
-      <h3 className="text-lg font-bold mb-2">Escanea este código QR con Google Authenticator</h3>
+      <h3 className="text-lg font-bold mb-2">
+        Escanea este código QR con Google Authenticator
+      </h3>
       {otpUri ? (
         <QRCodeCanvas value={otpUri} size={200} />
       ) : (
