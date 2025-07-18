@@ -1,7 +1,7 @@
-import { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { logoutUser } from '../../store/slices/userSlice'; // Asegúrate de tener este action
-import { useNavigate } from 'react-router-dom';
+import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { logoutUser } from "../../store/slices/userSlice"; // Asegúrate de tener este action
+import { useNavigate } from "react-router-dom";
 
 const Navbar = () => {
   const dispatch = useDispatch();
@@ -11,10 +11,10 @@ const Navbar = () => {
 
   const handleLogout = () => {
     dispatch(logoutUser()).then(() => {
-      navigate('/login'); // Redirige al usuario a la página de login
+      navigate("/login"); // Redirige al usuario a la página de login
     });
   };
-console.log(user.name);
+  console.log(user.name);
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
   };
@@ -30,10 +30,20 @@ console.log(user.name);
       {/* Dropdown del usuario */}
       <div className="flex items-center space-x-4">
         <button
-          onClick={() => navigate('/dashboard')} // Redirige al dashboard
+          onClick={() => navigate("/dashboard")} // Redirige al dashboard
           className="text-primary-text hover:text-primary-dark"
->holi</button>
-</div>
+        >
+          holi
+        </button>
+      </div>
+      <div className="flex items-center space-x-4">
+        <button
+          onClick={() => navigate("/dashboard")} // Redirige al dashboard
+          className="text-primary-text hover:text-primary-dark"
+        >
+          holi
+        </button>
+      </div>
       <div className="relative">
         <button
           onClick={toggleDropdown}
@@ -47,7 +57,7 @@ console.log(user.name);
         {isDropdownOpen && (
           <div className="absolute right-0 mt-2 w-48 bg-white text-primary-text rounded-lg shadow-lg">
             <button
-              onClick={() => navigate('/profile')} // Redirige al perfil (lo implementaremos más adelante)
+              onClick={() => navigate("/profile")} // Redirige al perfil (lo implementaremos más adelante)
               className="block w-full px-4 py-2 text-left hover:bg-gray-100"
             >
               Perfil

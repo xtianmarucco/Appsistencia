@@ -33,12 +33,12 @@ const Login = () => {
   };
 
   return (
-    <div className="p-4 bg-primary text-primary-text">
-      <h1 className="text-2xl font-bold">Iniciar Sesión</h1>
+    <div className=" bg-blue-800 bg-contain bg-no-repeat bg-left  text-primary-text align-center flex flex-col items-center justify-center min-h-screen">
+      <navbar className="w-full bg- p-4 text-white"></navbar>
     <LoginForm onSubmit={handleLogin} error={error} isLoading={isLoading} />
 
       {/* Mostrar error global si existe */}
-      {error && <p className="text-red-600 mt-2">{error}</p>}
+      {/* {error && <p className="text-red-600 mt-2">{error}</p>} */}
       {/* Mostrar loading si está cargando */}
       {isLoading && <p className="text-gray-400">Cargando...</p>}
     </div>
