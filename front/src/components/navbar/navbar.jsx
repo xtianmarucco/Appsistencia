@@ -20,30 +20,41 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="bg-red-300 text-primary p-4 flex justify-between items-center shadow-lg">
+    <nav className="bg-gradient-to-br from-blue-800 via-blue-500 to-cyan-400 text-white p-4 flex justify-between items-center shadow-lg">
       {/* Logo de la aplicación */}
       <div className="flex items-center">
         <span className="text-xl font-bold">Appsistencia</span>
         <span className="ml-2">⏰</span> {/* Icono de reloj */}
       </div>
 
-      {/* Dropdown del usuario */}
-      <div className="flex items-center space-x-4">
-        <button
-          onClick={() => navigate("/dashboard")} // Redirige al dashboard
-          className="text-primary-text hover:text-primary-dark"
-        >
-          holi
-        </button>
-      </div>
-      <div className="flex items-center space-x-4">
-        <button
-          onClick={() => navigate("/dashboard")} // Redirige al dashboard
-          className="text-primary-text hover:text-primary-dark"
-        >
-          holi
-        </button>
-      </div>
+      {/* Links de navegación para admin */}
+      {user?.role === "admin" && (
+        <div className="flex items-center space-x-6">
+          <button
+            onClick={() => navigate("/admin")}
+            className="hover:no-underline focus:no-underline cursor-pointer"
+            style={{ textDecoration: 'none' }}
+          >
+            Admin Dashboard
+          </button>
+          <button
+            onClick={() => navigate("/user-list")}
+            className="hover:no-underline focus:no-underline cursor-pointer"
+            style={{ textDecoration: 'none' }}
+          >
+            Users List
+          </button>
+          <button
+            onClick={() => navigate(`/user-detail/${user.id || ''}`)}
+            className="hover:no-underline focus:no-underline cursor-pointer"
+            style={{ textDecoration: 'none' }}
+          >
+            User Detail
+          </button>
+        </div>
+      )}
+
+      {/* ...existing code... */}
       <div className="relative">
         <button
           onClick={toggleDropdown}
@@ -55,16 +66,18 @@ const Navbar = () => {
 
         {/* Menú desplegable */}
         {isDropdownOpen && (
-          <div className="absolute right-0 mt-2 w-48 bg-white text-primary-text rounded-lg shadow-lg">
+          <div className="absolute right-0 mt-2 w-48 bg-gradient-to-br from-blue-800 via-blue-500 to-cyan-400 text-white rounded-lg shadow-lg overflow-hidden">
             <button
-              onClick={() => navigate("/profile")} // Redirige al perfil (lo implementaremos más adelante)
-              className="block w-full px-4 py-2 text-left hover:bg-gray-100"
+              onClick={() => navigate("/profile")}
+              className="block w-full px-4 py-2 text-left hover:bg-blue-600 focus:bg-blue-700 focus:outline-none transition-colors duration-150 rounded-none cursor-pointer"
+              style={{ textDecoration: 'none' }}
             >
               Perfil
             </button>
             <button
               onClick={handleLogout}
-              className="block w-full px-4 py-2 text-left hover:bg-gray-100"
+              className="block w-full px-4 py-2 text-left hover:bg-blue-600 focus:bg-blue-700 focus:outline-none transition-colors duration-150 rounded-none cursor-pointer"
+              style={{ textDecoration: 'none' }}
             >
               Cerrar Sesión
             </button>
