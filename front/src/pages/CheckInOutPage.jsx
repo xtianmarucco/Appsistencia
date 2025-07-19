@@ -77,48 +77,48 @@ export default function CheckInOutPage() {
   };
 
   return (
-    <div className="flex flex-col items-center p-4">
-      <h2 className="text-2xl font-bold mb-4">Registro de Entrada/Salida</h2>
-
-      <p className="text-lg mb-4">
-        Usuario: {user.name} {user.lastname}
-      </p>
-
-      <p className="text-xl font-mono mb-6">
-        🕒 {new Date().toLocaleTimeString()}
-      </p>
-
-      {!hasCheckedIn ? (
-        <button
-          onClick={() => handleCheckInOut("check-in")}
-          disabled={isLoading}
-          className={`px-6 py-3 rounded text-white text-lg font-bold ${
-            isLoading ? "bg-gray-500" : "bg-green-600 hover:bg-green-700"
-          }`}
-        >
-          {isLoading ? "Procesando..." : "Marcar Entrada"}
-        </button>
-      ) : (
-        <button
-          onClick={() => handleCheckInOut("check-out")}
-          disabled={isLoading}
-          className={`px-6 py-3 rounded text-white text-lg font-bold ${
-            isLoading ? "bg-gray-500" : "bg-red-600 hover:bg-red-700"
-          }`}
-        >
-          {isLoading ? "Procesando..." : "Marcar Salida"}
-        </button>
-      )}
-
-      {modalOpen && (
-        <CheckInOutModal
-          isOpen={modalOpen}
-          type={modalType}
-          timestamp={timestamp}
-          onClose={handleCloseModal}
-          user={user}
-        />
-      )}
-    </div>
+    <main className="flex flex-col items-center p-4" aria-label="Registro de Entrada/Salida">
+      <header>
+        <h1 className="text-2xl font-bold mb-4">Registro de Entrada/Salida</h1>
+      </header>
+      <section className="w-full max-w-xl flex flex-col items-center" aria-label="Acciones de asistencia">
+        <p className="text-lg mb-4">
+          Usuario: {user.name} {user.lastname}
+        </p>
+        <p className="text-xl font-mono mb-6">
+          🕒 {new Date().toLocaleTimeString()}
+        </p>
+        {!hasCheckedIn ? (
+          <button
+            onClick={() => handleCheckInOut("check-in")}
+            disabled={isLoading}
+            className={`px-6 py-3 rounded text-white text-lg font-bold ${
+              isLoading ? "bg-gray-500" : "bg-green-600 hover:bg-green-700"
+            }`}
+          >
+            {isLoading ? "Procesando..." : "Marcar Entrada"}
+          </button>
+        ) : (
+          <button
+            onClick={() => handleCheckInOut("check-out")}
+            disabled={isLoading}
+            className={`px-6 py-3 rounded text-white text-lg font-bold ${
+              isLoading ? "bg-gray-500" : "bg-red-600 hover:bg-red-700"
+            }`}
+          >
+            {isLoading ? "Procesando..." : "Marcar Salida"}
+          </button>
+        )}
+        {modalOpen && (
+          <CheckInOutModal
+            isOpen={modalOpen}
+            type={modalType}
+            timestamp={timestamp}
+            onClose={handleCloseModal}
+            user={user}
+          />
+        )}
+      </section>
+    </main>
   );
 }
