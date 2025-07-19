@@ -1,0 +1,44 @@
+/* UserShiftsCalendar.module.css: estilos exclusivos para el componente UserShiftsCalendar */
+
+.calendarScrollContainer {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-accent-bg) var(--color-primary);
+}
+.calendarScrollContainer::-webkit-scrollbar {
+  width: 8px;
+}
+.calendarScrollContainer::-webkit-scrollbar-thumb {
+  background: var(--color-accent-bg);
+  border-radius: 4px;
+}
+.calendarScrollContainer::-webkit-scrollbar-track {
+  background: var(--color-primary);
+}
+
+/* Fondo del calendario (vista principal) */
+.fc-dayGridMonth-view.fc-view.fc-daygrid {
+  background: var(--color-primary);
+  max-height: 500px;
+  overflow-y: auto;
+}
+
+/* Botones del calendario (usando theme, sin gradiente) */
+.fc-toolbar-theme .fc-button,
+.fc .fc-button {
+  background: var(--color-accent-bg);
+  color: var(--color-primary-text);
+  border: none;
+  border-radius: 0.375rem;
+  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  transition: background 0.2s;
+}
+.fc-toolbar-theme .fc-button:hover,
+.fc .fc-button:hover {
+  background: var(--color-secondary);
+  color: var(--color-primary-text);
+}
+.fc-toolbar-theme .fc-button.fc-button-active,
+.fc .fc-button.fc-button-active {
+  background: var(--color-neutral);
+  color: var(--color-primary-text);
+}
