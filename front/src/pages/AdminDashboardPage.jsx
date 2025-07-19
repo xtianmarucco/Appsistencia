@@ -62,47 +62,43 @@ const AdminDashboard = () => {
 
   return (
     <>
-    <Navbar/>
-      <div className="p-4 text-primary-text">
-        <div className="p-6">
-        <h1 className="text-2xl mb-6 font-bold">Panel de Administrador</h1>
-       
-          <button
-            className="bg-green-500 text-white px-4 py-2 rounded mb-4"
-            onClick={() => {
-              setEditingUser(null); // 🔥 Asegurar que el formulario se limpie
-              setIsModalOpen(true);
-            }}
-          >
-            ➕ Crear Usuario
-          </button>
-
-          {/* ✅ Pasamos el método onEdit correctamente */}
-          <UserTable
-            onEdit={(user) => {
-              console.log("✏️ Editando usuario:", user);
-              setEditingUser(user); // ✅ Asegurar que se pasa el usuario correcto
-              setIsModalOpen(true);
-            }}
-          />
-
-          {/* ✅ Modal de Crear/Editar Usuario */}
+      <Navbar />
+      <main className="p-4 text-primary-text">
+        <section className="p-6" aria-label="Admin Dashboard">
+          <header>
+            <h1 className="text-2xl mb-6 font-bold">Panel de Administrador</h1>
+          </header>
+          <section aria-label="Acciones de usuario">
+            <button
+              className="bg-green-500 text-white px-4 py-2 rounded mb-4"
+              onClick={() => {
+                setEditingUser(null);
+                setIsModalOpen(true);
+              }}
+            >
+              ➕ Crear Usuario
+            </button>
+            <UserTable
+              onEdit={(user) => {
+                setEditingUser(user);
+                setIsModalOpen(true);
+              }}
+            />
+          </section>
           <UserFormModal
             isOpen={isModalOpen}
             onClose={() => setIsModalOpen(false)}
             onSubmit={editingUser ? handleEditUser : handleCreateUser}
             userData={editingUser}
           />
-
-          {/* ✅ Modal de Notificación */}
           <NotificationModal
             isOpen={notification.isOpen}
             onClose={handleCloseNotification}
             message={notification.message}
             isError={notification.isError}
           />
-        </div>
-      </div>
+        </section>
+      </main>
     </>
   );
 };

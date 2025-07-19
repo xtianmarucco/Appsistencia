@@ -50,26 +50,26 @@ export default function SetupOtpPage() {
 
   return (
     <>
-    
-    <Navbar />
-    <div className="flex flex-col items-center p-4">
-      <h2 className="text-2xl font-bold mb-4">Verificación OTP</h2>
-
-      {/* ✅ Mostramos el modal si `showModal = true` */}
-      {showOtpModal && <OtpValidateModal onClose={() => dispatch(hideOtpValidationModal())} />}
-
-      {/* ✅ Si `user_otp_configured = true`, mostramos la segunda validación OTP */}
-      {userOtpConfigured ? (
-        <OtpLoginValidation />
-      ) : (
-        !qrScanned ? (
-          <QrSetup onScanned={() => setQrScanned(true)} />
-        ) : (
-          <OtpValidation onOtpSuccess={() => setShowModal(true)} />
-        )
-      )}
-    </div>
+      <Navbar />
+      <main className="flex flex-col items-center p-4" aria-label="Verificación OTP">
+        <header>
+          <h1 className="text-2xl font-bold mb-4">Verificación OTP</h1>
+        </header>
+        <section className="w-full max-w-xl flex flex-col items-center" aria-label="Acciones OTP">
+          {/* ✅ Mostramos el modal si `showModal = true` */}
+          {showOtpModal && <OtpValidateModal onClose={() => dispatch(hideOtpValidationModal())} />}
+          {/* ✅ Si `user_otp_configured = true`, mostramos la segunda validación OTP */}
+          {userOtpConfigured ? (
+            <OtpLoginValidation />
+          ) : (
+            !qrScanned ? (
+              <QrSetup onScanned={() => setQrScanned(true)} />
+            ) : (
+              <OtpValidation onOtpSuccess={() => dispatch({ type: 'user/showOtpModal' })} />
+            )
+          )}
+        </section>
+      </main>
     </>
-   
   );
 }

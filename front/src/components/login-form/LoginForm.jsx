@@ -33,19 +33,21 @@ const LoginForm = ({ onSubmit, error, isLoading }) => {
   };
 
   return (
-    <div className="p-8 w-full max-w-[600px] bg-white text-primary-text flex flex-col items-center justify-center rounded shadow-lg">
+    <section className="p-8 w-full max-w-[600px] bg-white text-primary-text flex flex-col items-center justify-center rounded shadow-lg" aria-label="Login Form">
       <h1 className="text-2xl font-bold mb-4">Iniciar Sesión</h1>
       <form
         onSubmit={handleSubmit}
         className="w-full"
+        aria-label="Formulario de inicio de sesión"
       >
         <div className="mb-4">
           <label htmlFor="email" className="block mb-2">
             Email:
           </label>
           <input
-            type="email"
+            type="text"
             id="email"
+            name="email"
             value={email}
             onChange={(e) => {
               setEmail(e.target.value);
@@ -55,8 +57,9 @@ const LoginForm = ({ onSubmit, error, isLoading }) => {
             disabled={isLoading}
             aria-invalid={!!emailError}
             aria-describedby="email-error"
+            autoComplete="username"
           />
-          {emailError && <p id="email-error" className="text-red-500 text-sm mt-1">{emailError}</p>}
+          {emailError && <p id="email-error" className="text-red-500 text-sm mt-1" role="alert">{emailError}</p>}
         </div>
         <div className="mb-4">
           <label htmlFor="password" className="block mb-2">
@@ -65,6 +68,7 @@ const LoginForm = ({ onSubmit, error, isLoading }) => {
           <input
             type="password"
             id="password"
+            name="password"
             value={password}
             onChange={(e) => {
               setPassword(e.target.value);
@@ -74,6 +78,7 @@ const LoginForm = ({ onSubmit, error, isLoading }) => {
             disabled={isLoading}
             aria-invalid={!!passwordError}
             aria-describedby="password-error"
+              autoComplete="current-password"
           />
           {passwordError && <p id="password-error" className="text-red-500 text-sm mt-1">{passwordError}</p>}
         </div>
@@ -114,7 +119,7 @@ const LoginForm = ({ onSubmit, error, isLoading }) => {
           )}
         </button>
       </form>
-    </div>
+    </section>
   );
 };
 

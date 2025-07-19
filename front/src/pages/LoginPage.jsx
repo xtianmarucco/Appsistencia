@@ -34,13 +34,13 @@ const Login = () => {
   };
 
   return (
-    <div className="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-800 via-blue-500 to-cyan-400 text-primary-text">
+    <main className="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-800 via-blue-500 to-cyan-400 text-primary-text">
       <Loader />
-      <div className="flex flex-col items-center w-full">
-        <nav className="w-full p-4 text-white"></nav>
+      <section className="flex flex-col items-center w-full" aria-label="Login Section">
+        <nav className="w-full p-4 text-white" aria-label="Main Navigation"></nav>
         <LoginForm onSubmit={handleLogin} error={error} isLoading={isLoading} />
-      </div>
-    </div>
+      </section>
+    </main>
   );
 };
 

@@ -4,7 +4,7 @@ export default function ConfirmModal({ isOpen, onClose, onConfirm, title, messag
     return (
       <div className="fixed inset-0 flex items-center justify-center z-50">
         {/* 🔹 Fondo oscuro con opacidad */}
-        <div className="fixed inset-0 bg-gray-500 opacity-80"></div>
+        <div className="fixed inset-0 bg-gray-500 opacity-60"></div>
   
         {/* 🔹 Contenedor del modal */}
         <div className="relative bg-white p-6 rounded shadow-lg w-96 z-10">
