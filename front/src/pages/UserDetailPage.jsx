@@ -1,7 +1,12 @@
 import { useEffect, useState } from "react";
 import { fetchUserStats } from "../services/userDetailService"; // Importa tu service
 import { useParams } from "react-router-dom";
+
 import Navbar from "../components/navbar/Navbar";
+import UserDetailCard from "../components/user-detail/UserDetailCard";
+import UserShiftsCalendar from "../components/user-calendar/UserShiftsCalendar";
+import Footer from "../components/layout/Footer";
+import { fetchUserShifts } from "../services/userShiftsService";
 
 const UserDetailPage = () => {
   const { id: userId } = useParams(); // Obtiene el ID del usuario desde la URL
@@ -10,16 +15,15 @@ const UserDetailPage = () => {
   const [stats, setStats] = useState(null); // Para guardar stats: horas trabajadas, etc.
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [events, setEvents] = useState([]);
+  const [loadingEvents, setLoadingEvents] = useState(true);
 
   useEffect(() => {
     const loadUserDetail = async () => {
       setLoading(true);
       setError("");
       try {
-        // Llama al service que creamos
         const data = await fetchUserStats(userId);
-
-        // Actualiza los estados con los datos recibidos
         setUser(data.user);
         setStats(data.stats);
       } catch (err) {
@@ -28,58 +32,35 @@ const UserDetailPage = () => {
         setLoading(false);
       }
     };
-
     if (userId) loadUserDetail();
   }, [userId]);
 
-  // Render simple de ejemplo:
-  if (loading) return <p>Cargando...</p>;
-  if (error) return <div className="p-8 text-red-500">{error}</div>;
-  if (!user || !stats) return <p>No hay datos</p>;
-  
+  useEffect(() => {
+    if (!userId) return;
+    setLoadingEvents(true);
+    fetchUserShifts(userId)
+      .then(setEvents)
+      .catch(() => setEvents([]))
+      .finally(() => setLoadingEvents(false));
+  }, [userId]);
+
+  if (loading) return <main className="p-8"><p>Cargando...</p></main>;
+  if (error) return <main className="p-8 text-red-500">{error}</main>;
+  if (!user || !stats) return <main className="p-8"><p>No hay datos</p></main>;
 
   return (
     <>
       <Navbar />
-      <div className="p-8 max-w-2xl mr-auto">
-        <h2 className="text-2xl font-bold mb-6">Detalle del Usuario</h2>
-        {user && (
-          <div className="bg-white shadow rounded p-6 mb-4">
-            <p>
-              <strong>Nombre:</strong> {user.name} {user.lastname}
-            </p>
-            <p>
-              <strong>Email:</strong> {user.email}
-            </p>
-            <p>
-              <strong>Rol:</strong> {user.role}
-            </p>
-            <p>
-              <strong>Estado:</strong> {user.active ? "Activo" : "Inactivo"}
-            </p>
-            {/* Agrega más info si la necesitas */}
-          </div>
-        )}
-
-        {stats && (
-          <div className="bg-blue-50 shadow rounded p-6">
-            <h3 className="text-xl font-semibold mb-4">
-              Estadísticas del Mes Actual
-            </h3>
-            <p>
-              <strong>Turnos cubiertos:</strong> {stats.totalShifts ?? "N/A"}
-            </p>
-            <p>
-              <strong>Horas trabajadas:</strong> {stats.totalHours ?? "N/A"}
-            </p>
-            <p>
-              <strong>Mes:</strong> {stats.month}
-            </p>
-
-            {/* Agrega más métricas según tu endpoint */}
-          </div>
-        )}
-      </div>
+      <main className="p-8 mx-1.5" aria-label="Detalle del usuario">
+        <header>
+          <h1 className="text-2xl font-bold mb-6">Detalle del Usuario</h1>
+        </header>
+        <UserDetailCard user={user} stats={stats} />
+        <section className="mt-8">
+          <UserShiftsCalendar events={events} loading={loadingEvents} title="Turnos del Mes" />
+        </section>
+      </main>
+      <Footer />
     </>
   );
 };
