@@ -1,3 +1,4 @@
+import Footer from "../components/layout/Footer";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -34,13 +35,16 @@ const Login = () => {
   };
 
   return (
-    <main className="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-800 via-blue-500 to-cyan-400 text-primary-text">
-      <Loader />
-      <section className="flex flex-col items-center w-full" aria-label="Login Section">
-        <nav className="w-full p-4 text-white" aria-label="Main Navigation"></nav>
-        <LoginForm onSubmit={handleLogin} error={error} isLoading={isLoading} />
-      </section>
-    </main>
+    <>
+      <main className="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-800 via-blue-500 to-cyan-400 text-primary-text">
+        <Loader />
+        <section className="flex flex-col items-center w-full" aria-label="Login Section">
+          <nav className="w-full p-4 text-white" aria-label="Main Navigation"></nav>
+          <LoginForm onSubmit={handleLogin} error={error} isLoading={isLoading} />
+        </section>
+      </main>
+      <Footer />
+    </>
   );
 };
 

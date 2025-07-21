@@ -5,6 +5,7 @@ import QrSetup from "../components/qr-generator/QrSetup";
 import OtpValidation from "../components/otp-validator/OtpValidationA";
 import OtpLoginValidation from "../components/otp-login-validation/OtpLoginValidation";
 import Navbar from "../components/navbar/Navbar";
+import Footer from "../components/layout/Footer";
 
 // Assuming hideOtpValidationModal is an action from a Redux slice
 import { hideOtpValidationModal } from "../store/slices/userSlice";
@@ -70,6 +71,7 @@ export default function SetupOtpPage() {
           )}
         </section>
       </main>
+      <Footer />
     </>
   );
 }

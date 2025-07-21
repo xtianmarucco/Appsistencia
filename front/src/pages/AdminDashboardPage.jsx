@@ -4,6 +4,7 @@ import UserTable from "../components/user-table/UserTable";
 import UserFormModal from "../components/user-form-modal/UserFormModal";
 import NotificationModal from "../components/notification-modal/NotificationModal";
 import Navbar from "../components/navbar/Navbar";
+import Footer from "../components/layout/Footer";
 
 const AdminDashboard = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -99,6 +100,7 @@ const AdminDashboard = () => {
           />
         </section>
       </main>
+      <Footer />
     </>
   );
 };

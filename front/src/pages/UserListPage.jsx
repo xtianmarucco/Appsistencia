@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import UserList from "../components/user-list/UserList";
 import Navbar from "../components/navbar/Navbar";
+import Footer from "../components/layout/Footer";
 import DatePicker from "react-datepicker"; // Asegúrate de instalar react-datepicker
 import "react-datepicker/dist/react-datepicker.css";
 import NoEmployeeInfo from "../components/no-employee-info/NoEmployeeInfo";
@@ -63,6 +64,7 @@ export default function UserListPage() {
 
         {loading ? <NoEmployeeInfo/> : <UserList users={users} />}
       </div>
+      <Footer />
     </>
   );
 }

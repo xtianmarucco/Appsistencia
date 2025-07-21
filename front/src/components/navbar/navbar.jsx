@@ -20,7 +20,7 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="bg-gradient-to-br from-blue-800 via-blue-500 to-cyan-400 text-white p-4 flex justify-between items-center shadow-lg">
+    <nav className="bg-gradient-to-br from-blue-800 via-blue-500 to-cyan-400 text-white p-4 flex justify-between items-center shadow-lg sticky top-0 z-50">
       {/* Logo de la aplicación */}
       <div className="flex items-center">
         <span className="text-xl font-bold">Appsistencia</span>

@@ -1,11 +1,10 @@
 // import UserList from "../components/usersList";
-import Navbar from "../components/navbar/Navbar";
+import Footer from "../components/layout/Footer";
 
 
 const EmployeeDashboard = () => {
   return (
     <>
-      <Navbar />
       <main className="p-4 text-primary-text">
         <header>
           <h1 className="text-2xl mb-4 font-bold">Panel de Empleado</h1>
@@ -15,6 +14,7 @@ const EmployeeDashboard = () => {
           {/* <UserList /> */}
         </section>
       </main>
+      <Footer />
     </>
   );
 };
