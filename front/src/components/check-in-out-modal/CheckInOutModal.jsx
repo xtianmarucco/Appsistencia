@@ -1,4 +1,4 @@
-export default function CheckInOutModal({ isOpen, type, onClose, timestamp }) {
+export default function CheckInOutModal({ isOpen, type, onClose, timestamp, user }) {
   if (!isOpen) return null;
 
   let title, message;
@@ -9,12 +9,15 @@ export default function CheckInOutModal({ isOpen, type, onClose, timestamp }) {
       })
     : "N/A";
 
+  const userName = user?.name || "Usuario";
+  const userLastName = user?.lastname || "";
+
   if (type === "check-in") {
     title = "✅ Check-in Exitoso";
-    message = `Tu entrada fue registrada a las ${formattedTime}.`;
+    message = `Bienvenido, ${userName} ${userLastName}, buena jornada.\nTu entrada fue registrada a las ${formattedTime}.`;
   } else if (type === "check-out") {
     title = "✅ Check-out Exitoso";
-    message = `Tu salida fue registrada a las ${formattedTime}.`;
+    message = `Hasta luego, ${userName} ${userLastName}, nos vemos la próxima.\nTu salida fue registrada a las ${formattedTime}.`;
   } else {
     title = "❌ Error en la operación";
     message = "Hubo un problema al procesar tu solicitud. Inténtalo nuevamente.";
@@ -24,7 +27,7 @@ export default function CheckInOutModal({ isOpen, type, onClose, timestamp }) {
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
       <div className="bg-white p-6 rounded-lg shadow-lg text-center">
         <h2 className="text-2xl font-bold mb-2">{title}</h2>
-        <p className="mb-4">{message}</p>
+        <p className="mb-4 whitespace-pre-line">{message}</p>
         <button
           onClick={onClose}
           className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"

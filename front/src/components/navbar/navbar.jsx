@@ -22,7 +22,8 @@ const Navbar = () => {
   return (
     <nav className="bg-gradient-to-br from-blue-800 via-blue-500 to-cyan-400 text-white p-4 flex justify-between items-center shadow-lg sticky top-0 z-50">
       {/* Logo de la aplicación */}
-      <div className="flex items-center">
+      <div className="flex items-center cursor-pointer"   onClick={() => navigate("/admin")}>
+       
         <span className="text-xl font-bold">Appsistencia</span>
         <span className="ml-2">⏰</span> {/* Icono de reloj */}
       </div>
@@ -44,13 +45,7 @@ const Navbar = () => {
           >
             Users List
           </button>
-          <button
-            onClick={() => navigate(`/user-detail/${user.id || ''}`)}
-            className="hover:no-underline focus:no-underline cursor-pointer"
-            style={{ textDecoration: 'none' }}
-          >
-            User Detail
-          </button>
+  
         </div>
       )}
 

@@ -46,24 +46,25 @@ export default function OtpValidation() {
   };
 
   return (
-    <div className="bg-white p-4 rounded shadow-md">
-      <h3 className="text-lg font-bold text-primary-dark mb-2">
-        Ingresa el código de Google Authenticator
-      </h3>
-
-      <input
-        type="text"
-        value={otp}
-        onChange={(e) => setOtp(e.target.value)}
-        className="w-full px-4 py-2 border rounded focus:outline-none focus:border-primary mb-2"
-      />
-      {error && <p className="text-red-500">{error}</p>}
-      <button
-        onClick={handleValidation}
-        className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-primary"
-      >
-        Confirmar OTP
-      </button>
+    <div className="flex min-h-[320px] min-w-[320px] items-center justify-center">
+      <div className="bg-white p-8 rounded-lg shadow-2xl flex flex-col items-center w-full max-w-md">
+        <h3 className="text-lg font-bold text-primary-dark mb-2 text-center">
+          Ingresa el código de Google Authenticator
+        </h3>
+        <input
+          type="text"
+          value={otp}
+          onChange={(e) => setOtp(e.target.value)}
+          className="w-full px-4 py-2 border rounded focus:outline-none focus:border-primary mb-2 text-center"
+        />
+        {error && <p className="text-red-500 text-center">{error}</p>}
+        <button
+          onClick={handleValidation}
+          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-primary w-full mt-2"
+        >
+          Confirmar OTP
+        </button>
+      </div>
     </div>
   );
 }

@@ -1,4 +1,3 @@
-import React from "react";
 
 const NotificationModal = ({ isOpen, onClose, message, isError }) => {
   if (!isOpen) return null;

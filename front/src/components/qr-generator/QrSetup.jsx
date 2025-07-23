@@ -22,8 +22,10 @@ export default function QrSetup({ onScanned }) {
   }, [user]);
 
   return (
-    <div className="flex flex-col items-center">
-      <h3 className="text-lg font-bold mb-2">
+    <div className="flex flex-col justify-arounds items-center shadow-2xl p-8 bg-white rounded-lg">
+      <h1 className="text-2xl text-center font-bold mb-4">Verificación OTP</h1>
+
+      <h3 className="text-lg mb-4">
         Escanea este código QR con Google Authenticator
       </h3>
       {otpUri ? (

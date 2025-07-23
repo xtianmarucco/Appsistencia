@@ -26,7 +26,7 @@ const UserDetailPage = () => {
         const data = await fetchUserStats(userId);
         setUser(data.user);
         setStats(data.stats);
-      } catch (err) {
+      } catch {
         setError("Error al obtener el detalle del usuario");
       } finally {
         setLoading(false);
