@@ -1,6 +1,4 @@
 // import UserList from "../components/usersList";
-import Footer from "../components/layout/Footer";
-
 
 const EmployeeDashboard = () => {
   return (
@@ -14,7 +12,6 @@ const EmployeeDashboard = () => {
           {/* <UserList /> */}
         </section>
       </main>
-      <Footer />
     </>
   );
 };

@@ -19,7 +19,7 @@ export default function Footer() {
 
   return (
     <footer
-      className={`w-full bg-[var(--color-accent-bg)] py-4 text-center text-sm text-white mt-12 sticky bottom-0 z-50 transition-transform duration-300 ${
+      className={`w-full bg-[var(--color-accent-bg)] py-4 text-center text-sm text-white mt-12 absolute bottom-0  ${
         visible ? "translate-y-0" : "translate-y-full"
       }`}
       aria-label="Pie de página"

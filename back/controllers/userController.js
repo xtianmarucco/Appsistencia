@@ -75,28 +75,29 @@ export const createUser = async (req, res) => {
 // ✅ Editar usuario
 export const updateUser = async (req, res) => {
   try {
-    const { id } = req.params;
-    const { name, lastname, email, role, hourly_wage, active } = req.body;
 
-    if (!name || !lastname || !email || !role) {
+    const { id } = req.params;
+    const { name, lastname, email, password, hourly_wage, active } = req.body;
+
+    if (!name || !lastname || !email) {
       return res.status(400).json({ error: "Todos los campos son obligatorios" });
     }
 
-    const result = await pool.query(
-      `UPDATE users
-      SET name=$1, lastname=$2, email=$3, role=$4, hourly_wage=$5, active=$6
-      WHERE id=$7
-      RETURNING *`,
-      [
-        name,
-        lastname,
-        email,
-        role,
-        role === "employee" ? hourly_wage : null,
-        active,
-        id
-      ]
-    );
+    // Construir la consulta dinámica para actualizar solo los campos permitidos
+    let query = `UPDATE users SET name=$1, lastname=$2, email=$3, hourly_wage=$4, active=$5`;
+    let params = [name, lastname, email, hourly_wage, active];
+    let paramIndex = 6;
+
+    if (password) {
+      query += `, password=$${paramIndex}`;
+      params.push(password);
+      paramIndex++;
+    }
+
+    query += ` WHERE id=$${paramIndex} RETURNING *`;
+    params.push(id);
+
+    const result = await pool.query(query, params);
 
     if (result.rows.length === 0) {
       return res.status(404).json({ error: "Usuario no encontrado" });

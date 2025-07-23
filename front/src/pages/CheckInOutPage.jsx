@@ -3,8 +3,6 @@ import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { setLoading, logoutUser } from "../store/slices/userSlice";
 import CheckInOutModal from "../components/check-in-out-modal/CheckInOutModal";
-import Footer from "../components/layout/Footer";
-
 export default function CheckInOutPage() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -122,7 +120,6 @@ export default function CheckInOutPage() {
           )}
         </section>
       </main>
-      <Footer />
     </>
   );
 }

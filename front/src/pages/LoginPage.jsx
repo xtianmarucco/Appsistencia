@@ -1,4 +1,3 @@
-import Footer from "../components/layout/Footer";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -43,7 +42,6 @@ const Login = () => {
           <LoginForm onSubmit={handleLogin} error={error} isLoading={isLoading} />
         </section>
       </main>
-      <Footer />
     </>
   );
 };

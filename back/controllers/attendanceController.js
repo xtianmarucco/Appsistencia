@@ -100,8 +100,9 @@ export const getCheckInStatus = async (req, res) => {
     const nowBuenosAires = DateTime.now().setZone("America/Argentina/Buenos_Aires");
     const last24Hours = nowBuenosAires.minus({ hours: 24 }).toUTC().toJSDate();
 
-    const result = await pool.query(
-      `SELECT id
+    // Buscar el último check-in en las últimas 24h
+    const checkinResult = await pool.query(
+      `SELECT id, work_session_id, timestamp
        FROM attendances
        WHERE user_id = $1
          AND action = 'check-in'
@@ -111,7 +112,24 @@ export const getCheckInStatus = async (req, res) => {
       [user_id, last24Hours]
     );
 
-    res.json({ hasCheckedIn: result.rows.length > 0 });
+    if (checkinResult.rows.length === 0) {
+      // No hay check-in reciente, puede marcar entrada
+      return res.json({ hasCheckedIn: false });
+    }
+
+    const { work_session_id } = checkinResult.rows[0];
+
+    // Buscar si hay un check-out para ese work_session_id
+    const checkoutResult = await pool.query(
+      `SELECT id FROM attendances
+       WHERE user_id = $1
+         AND action = 'check-out'
+         AND work_session_id = $2`,
+      [user_id, work_session_id]
+    );
+
+    // Si no hay check-out, debe marcar salida; si ya hay, puede marcar entrada de nuevo
+    res.json({ hasCheckedIn: checkoutResult.rows.length === 0 });
   } catch (error) {
     res.status(500).json({ error: "Error verificando check-in" });
   }

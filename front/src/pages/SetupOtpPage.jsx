@@ -4,19 +4,17 @@ import { setUser } from "../store/slices/userSlice";
 import QrSetup from "../components/qr-generator/QrSetup";
 import OtpValidation from "../components/otp-validator/OtpValidationA";
 import OtpLoginValidation from "../components/otp-login-validation/OtpLoginValidation";
-import Navbar from "../components/navbar/Navbar";
-import Footer from "../components/layout/Footer";
 
 // Assuming hideOtpValidationModal is an action from a Redux slice
 import { hideOtpValidationModal } from "../store/slices/userSlice";
 import OtpValidateModal from "../components/validate-success-modal/OtpValidateModal";
 
-
-
 export default function SetupOtpPage() {
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user.user);
-  const userOtpConfigured = useSelector((state) => state.user.user_otp_configured);
+  const userOtpConfigured = useSelector(
+    (state) => state.user.user_otp_configured
+  );
   const [qrScanned, setQrScanned] = useState(false);
   const [isReady, setIsReady] = useState(false);
   const showOtpModal = useSelector((state) => state.user.showOtpModal);
@@ -26,8 +24,6 @@ export default function SetupOtpPage() {
   useEffect(() => {
     // console.log("👀 SetupOtpPage - user_otp_configured:", userOtpConfigured);
   }, [userOtpConfigured]);
-
- 
 
   useEffect(() => {
     if (user !== null) {
@@ -51,27 +47,35 @@ export default function SetupOtpPage() {
 
   return (
     <>
-      <Navbar />
-      <main className="flex flex-col items-center p-4" aria-label="Verificación OTP">
-        <header>
-          <h1 className="text-2xl font-bold mb-4">Verificación OTP</h1>
-        </header>
-        <section className="w-full max-w-xl flex flex-col items-center" aria-label="Acciones OTP">
-          {/* ✅ Mostramos el modal si `showModal = true` */}
-          {showOtpModal && <OtpValidateModal onClose={() => dispatch(hideOtpValidationModal())} />}
-          {/* ✅ Si `user_otp_configured = true`, mostramos la segunda validación OTP */}
-          {userOtpConfigured ? (
-            <OtpLoginValidation />
-          ) : (
-            !qrScanned ? (
+      <main
+        className="flex flex-col justify-center bg-gradient-to-br from-blue-800 via-blue-500 to-cyan-400 items-center min-h-screen p-4"
+        aria-label="Verificación OTP"
+      >
+        <section
+          className="w-full max-w-xl flex flex-col items-center"
+          aria-label="Acciones OTP"
+        >
+          <div className="mb-4">
+
+            {/* ✅ Mostramos el modal si `showModal = true` */}
+            {showOtpModal && (
+              <OtpValidateModal
+                onClose={() => dispatch(hideOtpValidationModal())}
+              />
+            )}
+            {/* ✅ Si `user_otp_configured = true`, mostramos la segunda validación OTP */}
+            {userOtpConfigured ? (
+              <OtpLoginValidation />
+            ) : !qrScanned ? (
               <QrSetup onScanned={() => setQrScanned(true)} />
             ) : (
-              <OtpValidation onOtpSuccess={() => dispatch({ type: 'user/showOtpModal' })} />
-            )
-          )}
+              <OtpValidation
+                onOtpSuccess={() => dispatch({ type: "user/showOtpModal" })}
+              />
+            )}
+          </div>
         </section>
       </main>
-      <Footer />
     </>
   );
 }
