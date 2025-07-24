@@ -10,6 +10,7 @@ export const loginUser = createAsyncThunk(
       const user = await login(email, password);
       // Guardá el usuario en el slice
       dispatch(setUser(user));
+      console.log("Logged in user:", user);
       return user;
     } catch (error) {
       // Esto lo maneja el reducer de rejected
@@ -18,7 +19,9 @@ export const loginUser = createAsyncThunk(
   }
 );
 export const logoutUser = () => {
-  return (dispatch) => {
+  return (dispatch, getState) => {
+    const { user } = getState();
+    console.log("Logging out user:", user);
     // Podés limpiar el estado del usuario
     dispatch(setUser(null));
     // También podrías limpiar localStorage si es necesario
