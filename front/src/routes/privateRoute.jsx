@@ -1,6 +1,7 @@
 import { useSelector } from "react-redux";
 import { Navigate, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
+import Loader from "../components/loader/Loader";
 
 const PrivateRoute = ({ children, requiredRole }) => {
   const role = useSelector((state) => state.user.role);
@@ -9,7 +10,12 @@ const PrivateRoute = ({ children, requiredRole }) => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    if (role !== null) {
+    // Solo cambiar isLoading si role es null o un string válido
+    if (typeof role === "string" && role.length > 0) {
+      setIsLoading(false);
+    }
+    // Si el usuario no está logueado, también desactiva el loading
+    if (role === null) {
       setIsLoading(false);
     }
   }, [role]);
@@ -21,7 +27,7 @@ const PrivateRoute = ({ children, requiredRole }) => {
   // console.log("⏳ Loading State:", isLoading);
 
   if (isLoading) {
-    return <p>Cargando...</p>; // Evita redirecciones prematuras
+    return <Loader/>; // Evita redirecciones prematuras
   }
 
   if (!role) {
