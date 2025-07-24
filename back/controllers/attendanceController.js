@@ -39,7 +39,9 @@ export const getAttendances = async (req, res) => {
 export const checkInOut = async (req, res) => {
   try {
     const { user_id } = req.body;
+    console.log('[checkInOut] user_id recibido:', user_id);
     if (!user_id) {
+      console.log('[checkInOut] FALTA user_id en la solicitud');
       return res.status(400).json({ error: "Falta user_id en la solicitud." });
     }
 
@@ -50,37 +52,47 @@ export const checkInOut = async (req, res) => {
     // 2. Chequear si hay un check-in en las últimas 24h
     const last24Hours = nowBuenosAires.minus({ hours: 24 }).toUTC().toJSDate();
 
+    // Buscar solo check-ins pendientes (sin check-out asociado)
     const checkinResult = await pool.query(
-      `SELECT id, work_session_id, timestamp
-       FROM attendances
-       WHERE user_id = $1
-         AND action = 'check-in'
-         AND timestamp >= $2
-       ORDER BY timestamp DESC
+      `SELECT a.id, a.work_session_id, a.timestamp
+       FROM attendances a
+       WHERE a.user_id = $1
+         AND a.action = 'check-in'
+         AND a.timestamp >= $2
+         AND NOT EXISTS (
+           SELECT 1 FROM attendances b
+           WHERE b.user_id = a.user_id
+             AND b.work_session_id = a.work_session_id
+             AND b.action = 'check-out'
+         )
+       ORDER BY a.timestamp DESC
        LIMIT 1`,
       [user_id, last24Hours]
     );
+    console.log('[checkInOut] Resultado de búsqueda de check-in PENDIENTE en últimas 24h:', checkinResult.rows);
     const recentCheckin = checkinResult.rows[0];
 
     if (recentCheckin) {
-      // Registrar check-out con la MISMA sesión
+      console.log('[checkInOut] Se encontró check-in reciente, se registrará check-out. work_session_id:', recentCheckin.work_session_id);
       await pool.query(
         `INSERT INTO attendances (id, user_id, work_session_id, action, timestamp)
          VALUES ($1, $2, $3, $4, $5)`,
         [uuidv4(), user_id, recentCheckin.work_session_id, "check-out", nowUTC]
       );
+      console.log('[checkInOut] Check-out registrado');
       return res.json({
         message: "Check-out registrado correctamente",
         timestamp: nowBuenosAires.toFormat("dd-MM-yyyy HH:mm:ss"), // ← Mostramos la hora local
       });
     } else {
-      // Registrar check-in NUEVO
+      console.log('[checkInOut] No se encontró check-in reciente, se registrará check-in nuevo.');
       const newWorkSessionId = uuidv4();
       await pool.query(
         `INSERT INTO attendances (id, user_id, work_session_id, action, timestamp)
          VALUES ($1, $2, $3, $4, $5)`,
         [uuidv4(), user_id, newWorkSessionId, "check-in", nowUTC]
       );
+      console.log('[checkInOut] Check-in registrado');
       return res.json({
         message: "Check-in registrado correctamente",
         timestamp: nowBuenosAires.toFormat("yyyy-MM-dd HH:mm:ss"),
