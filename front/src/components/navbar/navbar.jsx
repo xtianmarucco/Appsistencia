@@ -23,8 +23,10 @@ const Navbar = () => {
   return (
     <nav className="bg-gradient-to-br from-blue-800 via-blue-500 to-cyan-400 text-white p-4 flex justify-between items-center shadow-lg sticky top-0 z-50">
       {/* Logo de la aplicación */}
-      <div className="flex items-center cursor-pointer"   onClick={() => navigate("/admin")}>
-       
+      <div
+        className="flex items-center cursor-pointer"
+        onClick={() => navigate("/admin")}
+      >
         <span className="text-xl font-bold">Appsistencia</span>
         <span className="ml-2">⏰</span> {/* Icono de reloj */}
       </div>
@@ -35,30 +37,28 @@ const Navbar = () => {
           <button
             onClick={() => navigate("/admin")}
             className="hover:no-underline focus:no-underline cursor-pointer"
-            style={{ textDecoration: 'none' }}
+            style={{ textDecoration: "none" }}
           >
             Admin Dashboard
           </button>
           <button
             onClick={() => navigate("/user-list")}
             className="hover:no-underline focus:no-underline cursor-pointer"
-            style={{ textDecoration: 'none' }}
+            style={{ textDecoration: "none" }}
           >
             Users List
           </button>
-  
         </div>
       )}
 
       {/* ...existing code... */}
       <div className="relative">
         <div className="flex items-center space-x-4">
-          <span className="text-base font-semibold">Hola {userName}</span>
           <button
             onClick={toggleDropdown}
             className="flex items-center space-x-2 focus:outline-none"
           >
-            <span>{userName}</span> {/* Nombre del usuario */}
+            <span className="text-base font-semibold">Hola {userName}</span>{" "}
             <span>👤</span> {/* Icono de usuario */}
           </button>
         </div>
@@ -69,14 +69,14 @@ const Navbar = () => {
             <button
               onClick={() => navigate("/profile")}
               className="block w-full px-4 py-2 text-left hover:bg-blue-600 focus:bg-blue-700 focus:outline-none transition-colors duration-150 rounded-none cursor-pointer"
-              style={{ textDecoration: 'none' }}
+              style={{ textDecoration: "none" }}
             >
               Perfil
             </button>
             <button
               onClick={handleLogout}
               className="block w-full px-4 py-2 text-left hover:bg-blue-600 focus:bg-blue-700 focus:outline-none transition-colors duration-150 rounded-none cursor-pointer"
-              style={{ textDecoration: 'none' }}
+              style={{ textDecoration: "none" }}
             >
               Cerrar Sesión
             </button>
