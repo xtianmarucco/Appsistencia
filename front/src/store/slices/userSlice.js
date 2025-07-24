@@ -1,14 +1,25 @@
 // userSlice.js
+
 import { createSlice } from "@reduxjs/toolkit";
-import { loginUser } from "../../thunks/loginThunk"; // <-- Importá el thunk (deberás crearlo con el nombre correcto)
+import { loginUser } from "../../thunks/loginThunk";
+
+// Persistencia: leer usuario de localStorage si existe
+const persistedUser = (() => {
+  try {
+    const data = localStorage.getItem("appsistencia_user");
+    return data ? JSON.parse(data) : null;
+  } catch {
+    return null;
+  }
+})();
 
 const initialState = {
-  user: null,
-  role: null,
-  user_otp_configured: false,
+  user: persistedUser || null,
+  role: persistedUser?.role ?? null,
+  user_otp_configured: persistedUser?.user_otp_configured ?? false,
   showOtpModal: false,
   isLoading: false,
-  error: null, // <-- Agregado para manejar errores de login
+  error: null,
 };
 
 const userSlice = createSlice({
@@ -16,10 +27,22 @@ const userSlice = createSlice({
   initialState,
   reducers: {
     setUser: (state, action) => {
-      state.user = action.payload;
-      state.role = action.payload.role;
-      state.user_otp_configured = action.payload.user_otp_configured;
+      state.user = {
+        id: action.payload.id || null,
+        name: action.payload.name || "",
+        lastname: action.payload.lastname || "",
+        email: action.payload.email || "",
+        role: action.payload.role || "",
+        estado: action.payload.estado || "",
+        user_otp_configured: action.payload.user_otp_configured || false,
+      };
+      state.role = action.payload.role ?? null;
+      state.user_otp_configured = action.payload.user_otp_configured || false;
       state.error = null;
+      // Guardar usuario en localStorage
+      try {
+        localStorage.setItem("appsistencia_user", JSON.stringify(state.user));
+      } catch {}
     },
     setUserOtpConfigured: (state, action) => {
       state.user_otp_configured = action.payload;
@@ -40,6 +63,10 @@ const userSlice = createSlice({
       state.showOtpModal = false;
       state.isLoading = false;
       state.error = null;
+      // Eliminar usuario de localStorage
+      try {
+        localStorage.removeItem("appsistencia_user");
+      } catch {/* ignore */}
     },
   },
   extraReducers: (builder) => {
@@ -49,11 +76,23 @@ const userSlice = createSlice({
         state.error = null;
       })
       .addCase(loginUser.fulfilled, (state, action) => {
-        state.user = action.payload;
-        state.role = action.payload.role;
-        state.user_otp_configured = action.payload.user_otp_configured;
+        state.user = {
+          id: action.payload.id || null,
+          name: action.payload.name || "",
+          lastname: action.payload.lastname || "",
+          email: action.payload.email || "",
+          role: action.payload.role || "",
+          estado: action.payload.estado || "",
+          user_otp_configured: action.payload.user_otp_configured || false,
+        };
+        state.role = action.payload.role ?? null;
+        state.user_otp_configured = action.payload.user_otp_configured || false;
         state.isLoading = false;
         state.error = null;
+        // Guardar usuario en localStorage
+        try {
+          localStorage.setItem("appsistencia_user", JSON.stringify(state.user));
+        } catch {}
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.isLoading = false;

@@ -7,6 +7,7 @@ const Navbar = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const user = useSelector((state) => state.user.user);
+  const userName = user?.name || user?.nombre || "";
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const handleLogout = () => {
@@ -51,13 +52,16 @@ const Navbar = () => {
 
       {/* ...existing code... */}
       <div className="relative">
-        <button
-          onClick={toggleDropdown}
-          className="flex items-center space-x-2 focus:outline-none"
-        >
-          <span>{user?.name}</span> {/* Nombre del usuario */}
-          <span>👤</span> {/* Icono de usuario */}
-        </button>
+        <div className="flex items-center space-x-4">
+          <span className="text-base font-semibold">Hola {userName}</span>
+          <button
+            onClick={toggleDropdown}
+            className="flex items-center space-x-2 focus:outline-none"
+          >
+            <span>{userName}</span> {/* Nombre del usuario */}
+            <span>👤</span> {/* Icono de usuario */}
+          </button>
+        </div>
 
         {/* Menú desplegable */}
         {isDropdownOpen && (

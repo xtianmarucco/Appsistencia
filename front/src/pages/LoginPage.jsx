@@ -14,7 +14,7 @@ const Login = () => {
 
   // 🔄 Navega según rol/OTP luego de login exitoso
   useEffect(() => {
-    if (user) {
+    if (user && user.id) {
       if (user.role === "admin") {
         navigate("/admin");
       } else {
