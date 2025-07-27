@@ -82,7 +82,7 @@ La carpeta `back/` contiene el backend de la aplicación, desarrollado en Node.j
 
 La carpeta `documents/` contiene documentación relevante para el proyecto, como:
 
-- **guidelines.txt**: Guía de buenas prácticas para trabajar con Copilot y mantener el código limpio, así como recomendaciones para el equipo de desarrollo.
+- **guidelines.txt**: Guía de buenas prácticas para trabajar y mantener el código limpio, así como recomendaciones para el equipo de desarrollo.
 - Otros documentos que puedan agregarse en el futuro para ayudar a los desarrolladores.
 
 ---
@@ -91,11 +91,16 @@ La carpeta `documents/` contiene documentación relevante para el proyecto, como
 
 ### Frontend
 - React
-- Redux
+- Redux Toolkit
 - Tailwind CSS
 - Vite
 - Axios
 - ESLint
+- FullCalendar
+- Luxon
+- QRCode.react
+- React Icons
+- React Router DOM
 
 ### Backend
 - Node.js
@@ -106,6 +111,7 @@ La carpeta `documents/` contiene documentación relevante para el proyecto, como
 - Bcrypt (para hash de contraseñas)
 - Dotenv
 - Docker
+- UUID
 
 ### Otros
 - Docker Compose (orquestación de contenedores)
@@ -203,24 +209,240 @@ La arquitectura de Appsistencia es de tipo cliente-servidor y está dividida en 
 
 ## Buenas Prácticas
 
-- Sigue la [guía de buenas prácticas](./documents/guidelines.txt) para trabajar con Copilot y mantener el código limpio.
+- Sigue la [guía de buenas prácticas](./documents/guidelines.txt) para trabajar y mantener el código limpio.
 - Usa nombres descriptivos para variables y funciones.
 - Escribe comentarios cuando el código no sea obvio.
 - Realiza pruebas antes de subir cambios.
 
 ---
 
-## Contribuir
-
-1. Haz un fork del repositorio.
-2. Crea una rama para tu feature o fix.
-3. Haz tus cambios y escribe pruebas si es necesario.
-4. Haz un pull request describiendo tus cambios.
-
----
-
 ## Contacto
 
 Para dudas o sugerencias, contacta a los administradores del repositorio o abre un issue.
+
+---
+
+# Appsistencia
+
+Appsistencia is a web application for managing and tracking employee attendance in companies. It allows employees to register their check-in and check-out, and administrators to view reports and manage users. This README is designed to help junior developers understand the structure, functionality, and how to contribute to the project.
+
+---
+
+## Table of Contents
+
+- [General Description](#general-description)
+- [Project Structure](#project-structure)
+- [Contents of the front Folder](#contents-of-the-front-folder)
+- [Contents of the back Folder](#contents-of-the-back-folder)
+- [Contents of the documents Folder](#contents-of-the-documents-folder)
+- [Technologies, Libraries, and Resources Used](#technologies-libraries-and-resources-used)
+- [Project Architecture](#project-architecture)
+- [Installation and Setup](#installation-and-setup)
+- [Data Model](#data-model)
+- [Best Practices](#best-practices)
+- [Contributing](#contributing)
+- [Contact](#contact)
+
+---
+
+## General Description
+
+Appsistencia is a solution for tracking employee attendance. Users can log in, register their attendance (check-in/check-out), and administrators can manage users and view reports.
+
+---
+
+## Project Structure
+
+```
+Appsistencia/
+├── front/
+│   ├── src/
+│   │   ├── pages/
+│   │   ├── components/
+│   │   └── thunks/
+│   └── package.json
+├── back/
+│   ├── src/
+│   │   ├── models/
+│   │   ├── routes/
+│   │   └── controllers/
+│   └── package.json
+├── documents/
+│   └── guidelines.txt
+├── docker-compose.yml
+└── README.md
+```
+
+---
+
+## Contents of the front Folder
+
+The `front/` folder contains all the source code for the application's frontend, developed in React. Its main subfolders are:
+
+- **src/pages/**: Main pages of the application, such as Login, Employee Dashboard, Admin Dashboard, CheckInOut, etc. Each page represents a complete view.
+- **src/components/**: Reusable React components, such as forms, modals, tables, user cards, date pickers, loaders, etc. These components are used across different pages.
+- **src/thunks/**: Asynchronous logic and Redux actions to interact with the API (e.g., login, registration, fetching user data, etc).
+- **public/**: Static files like images and the base `index.html` file.
+- **package.json**: Defines dependencies, scripts, and frontend configuration.
+- **Other files**: Configuration for Tailwind, Vite, ESLint, etc.
+
+---
+
+## Contents of the back Folder
+
+The `back/` folder contains the application's backend, developed in Node.js and Express. Its main subfolders are:
+
+- **src/models/**: Data models defined with Sequelize to interact with the PostgreSQL database. Includes models like User and Attendance.
+- **src/routes/**: Defines the API REST endpoints, grouped by functionality (users, attendance, authentication, etc).
+- **src/controllers/**: Business logic for each endpoint, such as validations, data processing, and request responses.
+- **database.js**: Configuration for connecting to the PostgreSQL database.
+- **server.js**: Entry point for the backend, where the Express server is initialized.
+- **package.json**: Defines dependencies, scripts, and backend configuration.
+- **Dockerfile**: Configuration for containerizing the backend.
+
+---
+
+## Contents of the documents Folder
+
+The `documents/` folder contains relevant documentation for the project, such as:
+
+- **guidelines.txt**: Best practices for working and maintaining clean code, as well as recommendations for the development team.
+- Other documents that may be added in the future to assist developers.
+
+---
+
+## Technologies, Libraries, and Resources Used
+
+### Frontend
+- React
+- Redux Toolkit
+- Tailwind CSS
+- Vite
+- Axios
+- ESLint
+- FullCalendar
+- Luxon
+- QRCode.react
+- React Icons
+- React Router DOM
+
+### Backend
+- Node.js
+- Express
+- Sequelize (ORM for PostgreSQL)
+- PostgreSQL
+- JWT (for authentication)
+- Bcrypt (for password hashing)
+- Dotenv
+- Docker
+- UUID
+
+### Other
+- Docker Compose (container orchestration)
+- Git (version control)
+
+---
+
+## Project Architecture
+
+Appsistencia's architecture is client-server based and divided into three major blocks:
+
+1. **Frontend (front/):**
+   - SPA (Single Page Application) built with React.
+   - Uses Redux for global state management.
+   - Communicates with the backend via HTTP requests (API REST).
+   - Utilizes Tailwind CSS for styling and Vite as a bundler.
+
+2. **Backend (back/):**
+   - API REST built with Node.js and Express.
+   - Uses Sequelize as an ORM to interact with the PostgreSQL database.
+   - Implements authentication with JWT and manages users, roles, and attendance.
+   - Exposes endpoints for login, registration, user management, and attendance tracking.
+
+3. **Database (PostgreSQL):**
+   - Stores information about users, roles, and attendance records.
+   - Managed and orchestrated using Docker Compose.
+
+4. **Docker Containers:**
+   - Each part (frontend, backend, database) runs in its own container.
+   - Orchestrated with `docker-compose.yml` for easy deployment and integration.
+
+---
+
+## Installation and Setup
+
+### Prerequisites
+- Docker and Docker Compose installed
+
+### Steps
+
+1. Clone the repository:
+   ```bash
+   git clone <repo-url>
+   cd Appsistencia
+   ```
+
+2. Configure environment variables:
+   - Create a `.env` file in the `back/` folder with your database configuration and secret keys. Example:
+     ```
+     DB_HOST=db
+     DB_USER=postgres
+     DB_PASSWORD=postgres
+     DB_NAME=appsistencia
+     DB_PORT=5432
+     JWT_SECRET=your_secret
+     ```
+
+3. Start the containers with Docker Compose:
+   ```bash
+   docker-compose up --build
+   ```
+
+   This will start the backend, frontend, and PostgreSQL database in separate containers.
+
+4. Access the application:
+   - The frontend will be available at `http://localhost:3000`
+   - The backend at `http://localhost:4000` (or the port you define)
+
+---
+
+## Data Model
+
+### User (`models/User.js`)
+```js
+{
+  name: STRING,
+  email: STRING,
+  password: STRING,
+  role: STRING, // 'admin' or 'user'
+  user_otp_configured: BOOLEAN
+}
+```
+
+### Attendance Record (`models/Attendance.js`)
+```js
+{
+  userId: INTEGER,
+  date: DATE,
+  checkInTime: DATE,
+  checkOutTime: DATE
+}
+```
+
+---
+
+## Best Practices
+
+- Follow the [best practices guide](./documents/guidelines.txt) for working and maintaining clean code.
+- Use descriptive names for variables and functions.
+- Write comments when the code is not obvious.
+- Test changes before pushing them.
+
+
+---
+
+## Contact
+
+For questions or suggestions, contact the repository administrators or open an issue.
 
 ---
