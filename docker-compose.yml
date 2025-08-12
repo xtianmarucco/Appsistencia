@@ -25,12 +25,12 @@ services:
     depends_on:
       - db
 
-  frontend:
-    build: ./front
-    ports:
-      - "8080:80"
-    depends_on:
-      - backend
+  # frontend:
+  #   build: ./front
+  #   ports:
+  #     - "8080:80"
+  #   depends_on:
+  #     - backend
 
 volumes:
   db_data:
