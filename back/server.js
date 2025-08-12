@@ -7,7 +7,7 @@ import attendanceRoutes from "./routes/attendanceRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import userDetailRoutes from './routes/userDetailRoutes.js';
 import userShiftsRoute from './routes/userShiftsRoute.js';
-
+import receiptRoutes from './routes/receiptRoutes.js';
 
 const app = express();
 app.use(cors());
@@ -21,7 +21,7 @@ app.use("/api/attendances", attendanceRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/login", loginRoutes);
 app.use('/api/users', userShiftsRoute);
- // <-- suma esto
+app.use('/api/receipts', receiptRoutes);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

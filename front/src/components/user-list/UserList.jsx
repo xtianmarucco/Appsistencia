@@ -1,7 +1,8 @@
 import { useState } from "react";
 import UserCard from "../user-card/UserCard";
+import PropTypes from "prop-types";
 
-export default function UserList({ users }) {
+export default function UserList({ users, onGenerateReceipt }) {
   const [search, setSearch] = useState("");
 
   // 🔥 Filtrar usuarios por nombre
@@ -22,7 +23,15 @@ export default function UserList({ users }) {
     
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {filteredUsers.length > 0 ? (
-          filteredUsers.map((user) => <UserCard key={user.id} user={user} />)
+          filteredUsers.map((user) => (
+            <UserCard
+              key={user.id}
+              user={user}
+              totalShifts={user.totalShifts || 0}
+              totalHours={user.totalHours || 0}
+              onGenerateReceipt={onGenerateReceipt}
+            />
+          ))
         ) : (
           <p>No se encontraron usuarios.</p>
         )}
@@ -30,3 +39,13 @@ export default function UserList({ users }) {
     </div>
   );
 }
+
+UserList.propTypes = {
+  users: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.string.isRequired,
+      name: PropTypes.string.isRequired,
+    })
+  ).isRequired,
+  onGenerateReceipt: PropTypes.func.isRequired,
+};

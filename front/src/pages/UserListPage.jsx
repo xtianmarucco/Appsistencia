@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import UserList from "../components/user-list/UserList";
 import Navbar from "../components/navbar/Navbar";
 import Footer from "../components/layout/Footer";
@@ -12,7 +12,7 @@ export default function UserListPage() {
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
 
-  const fetchUsersWithHours = async () => {
+  const fetchUsersWithHours = useCallback(async () => {
     if (!startDate || !endDate) return;
 
     try {
@@ -27,11 +27,11 @@ export default function UserListPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [startDate, endDate]);
 
   useEffect(() => {
     fetchUsersWithHours();
-  }, [startDate, endDate]);
+  }, [startDate, endDate, fetchUsersWithHours]);
 
   return (
     <>
@@ -62,7 +62,7 @@ export default function UserListPage() {
           </div>
         </div>
 
-        {loading ? <NoEmployeeInfo/> : <UserList users={users} />}
+        {loading ? <NoEmployeeInfo/> : <UserList users={users.map(user => ({ ...user, totalShifts: user.totalShifts || 0, totalHours: user.totalHours || 0 }))} onGenerateReceipt={() => console.log('Generate Receipt')} />}
       </div>
       <Footer />
     </>
