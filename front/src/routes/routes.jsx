@@ -1,4 +1,4 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useParams } from "react-router-dom";
 import PrivateRoute from "./privateRoute";
 import Login from "../pages/LoginPage";
 import AdminDashboard from "../pages/AdminDashboardPage";
@@ -25,7 +25,7 @@ export default function AppRoutes() {
         path="/user-detail/:id"
         element={
           <PrivateRoute requiredRole="admin">
-            <UserDetailPage />
+            <UserDetailPage userId={useParams().id} />
           </PrivateRoute>
         }
       />
