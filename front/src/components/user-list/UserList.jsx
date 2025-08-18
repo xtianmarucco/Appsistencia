@@ -27,8 +27,8 @@ export default function UserList({ users, onGenerateReceipt }) {
             <UserCard
               key={user.id}
               user={user}
-              totalShifts={user.totalShifts || 0}
-              totalHours={user.totalHours || 0}
+              totalShifts={Number(user.totalShifts || 0)}
+              totalHours={Number(user.totalHours || 0)}
               onGenerateReceipt={onGenerateReceipt}
             />
           ))
