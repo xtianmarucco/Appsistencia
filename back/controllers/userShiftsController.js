@@ -4,19 +4,23 @@ import pool from "../database.js";
 export const getUserShifts = async (req, res) => {
   try {
     const { id } = req.params;
-    // Opcional: puedes filtrar por fechas si quieres
-    // const { from, to } = req.query;
 
-    // 1. Trae todos los check-in y check-out del usuario
+    // 🗓️ Fecha actual y primer día del mes
+    const today = new Date();
+    const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+
+    // 🔥 Filtrar los registros solo del mes actual
     const result = await pool.query(
       `SELECT work_session_id, action, timestamp, date_trunc('day', timestamp) as day
        FROM attendances
        WHERE user_id = $1
+       AND timestamp >= $2
+       AND timestamp <= $3
        ORDER BY timestamp ASC`,
-      [id]
+      [id, startOfMonth.toISOString(), today.toISOString()]
     );
 
-    // 2. Agrupa por sesión de trabajo
+    // Agrupar por sesión de trabajo
     const sessions = {};
     result.rows.forEach((row) => {
       if (!sessions[row.work_session_id]) {
@@ -25,14 +29,15 @@ export const getUserShifts = async (req, res) => {
       sessions[row.work_session_id][row.action] = row.timestamp;
     });
 
-    // 3. Convierte a eventos FullCalendar
+    // Convertir a eventos FullCalendar
     const shifts = Object.values(sessions)
-      .filter(s => s["check-in"] && s["check-out"]) // Solo sesiones completas
+      .filter(s => s["check-in"] && s["check-out"])
       .map(s => ({
         title: "Turno",
         start: s["check-in"],
         end: s["check-out"],
       }));
+
     const totalShifts = shifts.length;
     const totalHours = shifts.reduce((acc, shift) => {
       const start = new Date(shift.start);
@@ -40,9 +45,7 @@ export const getUserShifts = async (req, res) => {
       const hours = (end - start) / (1000 * 60 * 60);
       return acc + hours;
     }, 0);
-    console.log(`📊 `, shifts);
-    console.log(`📊 Total de turnos ${totalShifts}`);
-    console.log(`📊 Total de turnos: ${totalShifts}, Total de horas: ${totalHours}`);
+
     res.json({ shifts, totalShifts, totalHours });
   } catch (error) {
     console.error("❌ Error obteniendo turnos:", error);
