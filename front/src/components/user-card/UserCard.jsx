@@ -1,15 +1,23 @@
 import { useMemo } from "react";
 import { FcBriefcase } from "react-icons/fc";
 import PropTypes from "prop-types";
+import { useNavigate } from "react-router-dom";
 
 export default function UserCard({ user }) {
+  const navigate = useNavigate();
+
   // 🔥 Asignamos un emoji de perfil basado en el rol
   const emoji = useMemo(() => {
     return user.role === "admin" ? "👑" : "👤";
   }, [user.role]);
 
+
+  const handleClick = () => {
+  navigate(`/users/${user.id}/summary`);
+};
   return (
-    <div className="bg-white p-4 rounded-lg shadow-md flex flex-col items-start space-y-4">
+    <div className="bg-white p-4 rounded-lg shadow-md flex flex-col items-start space-y-4 cursor-pointer"
+      onClick={handleClick}>
       <div className="flex items-center space-x-4">
         <span className="text-4xl">{emoji}</span>
         <div>

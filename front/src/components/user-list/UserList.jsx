@@ -9,7 +9,7 @@ export default function UserList({ users, onGenerateReceipt }) {
   const filteredUsers = users.filter((user) =>
     user.name.toLowerCase().includes(search.toLowerCase())
   );
-  console.log("📊 Usuarios recibidos en el frontend:", users);
+  // console.log("📊 Usuarios recibidos en el frontend:", users);
 
   return (
     <div className="">
@@ -47,5 +47,5 @@ UserList.propTypes = {
       name: PropTypes.string.isRequired,
     })
   ).isRequired,
-  onGenerateReceipt: PropTypes.func.isRequired,
+  // onGenerateReceipt: PropTypes.func.isRequired,
 };

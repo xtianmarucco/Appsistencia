@@ -14,7 +14,7 @@ export default function UserListPage() {
       const response = await fetch("http://localhost:3000/api/users");
       const data = await response.json();
       setUsers(data);
-      console.log("📋 Lista de usuarios:", data);
+      // console.log("📋 Lista de usuarios:", data);
     } catch (error) {
       console.error("❌ Error al obtener la lista de usuarios:", error);
     } finally {

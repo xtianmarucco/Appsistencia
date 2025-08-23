@@ -8,6 +8,8 @@ import CheckInOutPage from "../pages/CheckInOutPage";
 import UserListPage from "../pages/UserListPage";
 import UserDetailPage from "../pages/UserDetailPage";
 import UserCalendarPage from "../pages/UserCalendarPage";
+import UserSummaryPage from "../pages/UserSummaryPage";
+
 
 export default function AppRoutes() {
   return (
@@ -21,6 +23,8 @@ export default function AppRoutes() {
           </PrivateRoute>
         }
       />
+
+      <Route path="/users/:id/summary" element={<UserSummaryPage />} />
       <Route
         path="/user-detail/:id"
         element={
@@ -29,7 +33,7 @@ export default function AppRoutes() {
           </PrivateRoute>
         }
       />
-       <Route
+      <Route
         path="/user-list"
         element={
           <PrivateRoute requiredRole="admin">
@@ -53,7 +57,7 @@ export default function AppRoutes() {
           </PrivateRoute>
         }
       />
-      
+
       <Route
         path="/setup-otp"
         element={
@@ -70,6 +74,7 @@ export default function AppRoutes() {
           </PrivateRoute>
         }
       />
+
     </Routes>
   );
 }
