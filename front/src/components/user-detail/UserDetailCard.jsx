@@ -1,6 +1,6 @@
 import PropTypes from "prop-types";
 
-export default function UserDetailCard({ user, stats }) {
+export default function UserDetailCard({ user, summary }) {
   return (
     <section aria-label="Información del usuario" className="flex flex-row gap-4 items-stretch w-full">
       <article className="flex-1 bg-[#fafae0] shadow rounded p-6 flex flex-col justify-between min-h-[220px]" aria-label="Datos personales">
@@ -24,13 +24,13 @@ export default function UserDetailCard({ user, stats }) {
         <h2 className="text-xl font-semibold mb-4">Estadísticas del Mes Actual</h2>
         <div>
           <p>
-            <strong>Turnos cubiertos:</strong> {stats.totalShifts ?? "N/A"}
+            <strong>Turnos cubiertos:</strong> {summary.totalShifts ?? "N/A"}
           </p>
           <p>
-            <strong>Horas trabajadas:</strong> {stats.totalHours ?? "N/A"}
+            <strong>Horas trabajadas:</strong> {summary.totalHours ?? "N/A"}
           </p>
           <p>
-            <strong>Mes:</strong> {stats.month}
+            {/* <strong>Mes:</strong> {.month} */}
           </p>
         </div>
       </article>
@@ -40,5 +40,5 @@ export default function UserDetailCard({ user, stats }) {
 
 UserDetailCard.propTypes = {
   user: PropTypes.object.isRequired,
-  stats: PropTypes.object.isRequired,
+  summary: PropTypes.object.isRequired,
 };
