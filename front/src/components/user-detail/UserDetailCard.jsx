@@ -30,7 +30,7 @@ export default function UserDetailCard({ user, stats, summary }) {
             <strong>Horas trabajadas:</strong> {summary.totalHours ?? "N/A"}
           </p>
           <p>
-            <strong>Mes:</strong> {.month}
+            {/* <strong>Mes:</strong> {.month} */}
           </p>
         </div>
       </article>
