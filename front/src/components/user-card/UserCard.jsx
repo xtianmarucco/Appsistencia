@@ -16,7 +16,7 @@ export default function UserCard({ user }) {
   navigate(`/users/${user.id}/summary`);
 };
   return (
-    <div className="bg-white p-4 rounded-lg shadow-md flex flex-col items-start space-y-4 cursor-pointer"
+    <div className="bg-white border-2 border-gray-100 p-4 rounded-lg shadow-md flex flex-col items-start space-y-4 cursor-pointer"
       onClick={handleClick}>
       <div className="flex items-center space-x-4">
         <span className="text-4xl">{emoji}</span>

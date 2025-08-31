@@ -15,7 +15,7 @@ export const getUserShifts = async (req, res) => {
     } else {
       const now = DateTime.now().setZone("America/Argentina/Buenos_Aires");
       startDate = now.startOf("month").toJSDate();
-      endDate = now.endOf("month").toJSDate();
+      endDate = now.endOf("day").toJSDate(); // solo hasta el día de hoy
     }
 
     const result = await pool.query(
