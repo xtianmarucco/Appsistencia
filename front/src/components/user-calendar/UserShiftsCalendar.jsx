@@ -36,7 +36,7 @@ export default function UserShiftsCalendar({ onMonthChange, userId, title = "Tur
       );
 
   return (
-    <section className="p-6" aria-label="Calendario de turnos">
+    <section className="p-6 " aria-label="Calendario de turnos">
       <h2 className="text-2xl font-bold mb-4">{title}</h2>
         <div className="rounded-lg p-4 shadow-lg border border-gray-200 bg-[var(--color-primary)] overflow-hidden">
           <div

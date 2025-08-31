@@ -2,8 +2,8 @@ import PropTypes from "prop-types";
 
 export default function UserDetailCard({ user, summary }) {
   return (
-    <section aria-label="Información del usuario" className="flex flex-row gap-4 items-stretch w-full">
-      <article className="flex-1 bg-[#fafae0] shadow rounded p-6 flex flex-col justify-between min-h-[220px]" aria-label="Datos personales">
+    <section aria-label="Información del usuario" className="flex flex-row gap-4    items-stretch w-full">
+      <article className="flex-1 border-2 border-gray-100 bg-[#fafae0] shadow rounded p-6 flex flex-col justify-between min-h-[220px]" aria-label="Datos personales">
         <h2 className="text-xl font-semibold mb-4">Datos del Usuario</h2>
         <div>
           <p>
@@ -20,7 +20,7 @@ export default function UserDetailCard({ user, summary }) {
           </p>
         </div>
       </article>
-      <article className="flex-1 bg-blue-50 shadow rounded p-6 flex flex-col justify-between min-h-[220px]" aria-label="Estadísticas del mes actual">
+      <article className="flex-1  border-2 border-gray-100  bg-blue-50 shadow rounded p-6 flex flex-col justify-between min-h-[220px]" aria-label="Estadísticas del mes actual">
         <h2 className="text-xl font-semibold mb-4">Estadísticas del Mes Actual</h2>
         <div>
           <p>
