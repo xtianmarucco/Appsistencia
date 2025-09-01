@@ -1,6 +1,6 @@
 // src/pages/UserCalendarPage.jsx
 import { useEffect, useState } from "react";
-import Navbar from "../components/navbar/Navbar";
+// import Navbar from "../components/navbar/Navbar";
 import UserShiftsCalendar from "../components/user-calendar/UserShiftsCalendar";
 import { useParams } from "react-router-dom"; // Para obtener el userId de la URL
 import { fetchUserShifts } from "../services/userShiftsService";
@@ -25,7 +25,7 @@ export default function UserCalendarPage() {
 
   return (
     <>
-     <Navbar />
+     {/* <Navbar /> */}
       <main className="p-8 max-w-6xl mx-auto">
         <UserShiftsCalendar events={events} loading={loading} />
       </main>

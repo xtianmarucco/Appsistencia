@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import DateRangePicker from "../components/date-range-picker/DateRangePicker";
 import ReceiptModal from "../components/receipt-modal/ReceiptModal";
-import Navbar from "../components/navbar/Navbar";
+// import Navbar from "../components/navbar/Navbar";
 import Footer from "../components/layout/Footer";
 
 export default function UserDetail({ userId }) {
@@ -55,7 +55,7 @@ export default function UserDetail({ userId }) {
 
   return (
     <>
-      <Navbar className="bg-color-secondary" />
+      {/* <Navbar className="bg-color-secondary" /> */}
       <div className="p-6">
         <h2 className="text-2xl font-bold mb-4">Detalle del Usuario</h2>
         {user && (
