@@ -33,3 +33,22 @@ export const createReceipt = async (req, res) => {
     res.status(500).json({ error: "Error al guardar recibo" });
   }
 };
+export const getReceiptsByUser = async (req, res) => {
+  const { user_id } = req.params;
+
+  if (!user_id) {
+    return res.status(400).json({ error: "Falta el ID de usuario" });
+  }
+
+  try {
+    const result = await pool.query(
+      `SELECT * FROM receipts WHERE user_id = $1 ORDER BY created_at DESC`,
+      [user_id]
+    );
+
+    res.json({ receipts: result.rows });
+  } catch (error) {
+    console.error("❌ Error al obtener recibos:", error);
+    res.status(500).json({ error: "Error al obtener recibos del usuario" });
+  }
+};

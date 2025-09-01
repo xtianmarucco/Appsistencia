@@ -1,29 +1,32 @@
 // src/components/modals/ReceiptModal.jsx
 import { useState } from "react";
 import { createReceipt } from "../../services/receiptService";
-import  generatePDF  from "react-pdf-html";
+import generatePDF from "react-pdf-html";
 
 const ReceiptModal = ({ user, summary, dateRange, onClose }) => {
   const [observations, setObservations] = useState("");
+
   const handleSave = async (generate = false) => {
     try {
       const receiptData = {
-        userId: user.id,
-        startDate: dateRange.startDate,
-        endDate: dateRange.endDate,
-        totalShifts: summary.totalShifts,
-        totalHours: summary.totalHours,
-        totalAmount: summary.totalAmount,
-        observations,
+        user_id: user.id,
+        start_date: dateRange.startDate,
+        end_date: dateRange.endDate,
+        total_hours: summary.totalHours,
+        total_shifts: summary.totalShifts,
+        hourly_wage: user.hourly_wage,
+        total_amount: summary.totalAmount,
       };
 
+      // Primero guardamos el recibo en la base de datos
       const savedReceipt = await createReceipt(receiptData);
 
+      // Luego generamos el PDF si corresponde
       if (generate) {
         const html = `
           <div>
             <h1>Recibo de Pago</h1>
-            <p><strong>Nombre:</strong> ${user.name} ${user.lastname}</p>
+            <p><strong>Nombre:</strong> ${user.first_name} ${user.last_name}</p>
             <p><strong>Periodo:</strong> ${new Date(dateRange.startDate).toLocaleDateString()} - ${new Date(dateRange.endDate).toLocaleDateString()}</p>
             <p><strong>Turnos trabajados:</strong> ${summary.totalShifts}</p>
             <p><strong>Horas trabajadas:</strong> ${summary.totalHours}</p>
@@ -32,7 +35,9 @@ const ReceiptModal = ({ user, summary, dateRange, onClose }) => {
           </div>
         `;
 
-        await generatePDF(html, { filename: `Recibo-${user.name}-${user.lastname}.pdf` });
+        await generatePDF(html, {
+          filename: `Recibo-${user.first_name}-${user.last_name}.pdf`,
+        });
       }
 
       onClose();
@@ -40,7 +45,6 @@ const ReceiptModal = ({ user, summary, dateRange, onClose }) => {
       console.error("Error al guardar recibo:", err);
     }
   };
-      console.log(user);
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
@@ -48,7 +52,7 @@ const ReceiptModal = ({ user, summary, dateRange, onClose }) => {
         <h2 className="text-xl font-semibold mb-4 text-center">Generar Recibo</h2>
 
         <div className="mb-4">
-          <p><strong>Nombre:</strong> {user.name} {user.lastname}</p>
+          <p><strong>Nombre:</strong> {user.first_name} {user.last_name}</p>
           <p><strong>Periodo:</strong> {new Date(dateRange.startDate).toLocaleDateString()} - {new Date(dateRange.endDate).toLocaleDateString()}</p>
           <p><strong>Turnos:</strong> {summary.totalShifts}</p>
           <p><strong>Horas:</strong> {summary.totalHours}</p>
