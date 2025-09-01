@@ -1,4 +1,4 @@
-import { Routes, Route, useParams } from "react-router-dom";
+import { Routes, Route, useParams, Navigate } from "react-router-dom";
 import PrivateRoute from "./privateRoute";
 import Login from "../pages/LoginPage";
 import AdminDashboard from "../pages/AdminDashboardPage";
@@ -9,11 +9,14 @@ import UserListPage from "../pages/UserListPage";
 import UserDetailPage from "../pages/UserDetailPage";
 import UserCalendarPage from "../pages/UserCalendarPage";
 import UserSummaryPage from "../pages/UserSummaryPage";
+import NotFoundPage from "../pages/NotFoundPage";
 
 
 export default function AppRoutes() {
   return (
     <Routes>
+      <Route path="*" element={<NotFoundPage />} />
+      <Route path="/" element={<Navigate to="/login" />} />
       <Route path="/login" element={<Login />} />
       <Route
         path="/admin"
