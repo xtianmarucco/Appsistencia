@@ -1,8 +1,9 @@
 import express from "express";
-import { createReceipt } from "../controllers/receiptController.js";
+import { createReceipt, getReceiptsByUser } from "../controllers/receiptController.js";
 
 const router = express.Router();
 
-router.post("/receipts", createReceipt);
+router.post("/", createReceipt); // ✔️ Ruta correcta
+router.get("/user/:user_id", getReceiptsByUser);
 
 export default router;
