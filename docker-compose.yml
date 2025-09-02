@@ -1,36 +1,44 @@
+version: "3.9"
 
 services:
   db:
     image: postgres:16
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: supersecret
-      POSTGRES_DB: appsistencia
-    ports:
-      - "5433:5432"
+    restart: always
+    env_file:
+      - .env.production
     volumes:
       - db_data:/var/lib/postgresql/data
+    networks:
+      - appsistencia_net
 
   backend:
-    build: ./back
-    environment:
-      DB_HOST: db
-      DB_PORT: 5432
-      DB_USER: postgres
-      DB_PASSWORD: supersecret
-      DB_NAME: appsistencia
-      DATABASE_URL: postgres://postgres:supersecret@db:5432/appsistencia
+    build:
+      context: ./back
+    restart: always
+    env_file:
+      - .env.production
     ports:
       - "3000:3000"
     depends_on:
       - db
+    networks:
+      - appsistencia_net
 
   frontend:
-    build: ./front
+    build:
+      context: ./front
+    restart: always
+    env_file:
+      - .env.production
     ports:
-      - "8080:80"
+      - "80:80"
     depends_on:
       - backend
+    networks:
+      - appsistencia_net
 
 volumes:
   db_data:
+
+networks:
+  appsistencia_net:
