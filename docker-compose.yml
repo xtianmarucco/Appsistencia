@@ -13,8 +13,6 @@ services:
     build:
       context: ./back
     restart: always
-    env_file:
-      - .env.production
     ports:
       - "3000:3000"
     depends_on:
@@ -26,8 +24,6 @@ services:
     build:
       context: ./front
     restart: always
-    env_file:
-      - .env.production
     ports:
       - "80:80"
     depends_on:
