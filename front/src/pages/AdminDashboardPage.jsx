@@ -3,7 +3,7 @@ import { createUser, updateUser } from "../services/userService";
 import UserTable from "../components/user-table/UserTable";
 import UserFormModal from "../components/user-form-modal/UserFormModal";
 import NotificationModal from "../components/notification-modal/NotificationModal";
-// import Navbar from "../components/navbar/Navbar";
+import Navbar from "../components/navbar/Navbar";
 import Footer from "../components/layout/Footer";
 
 const AdminDashboard = () => {
@@ -63,7 +63,7 @@ const AdminDashboard = () => {
 
   return (
     <>
-      {/* <Navbar /> */}
+     <Navbar /> 
       <main className="p-4 text-primary-text">
         <section className="p-6" aria-label="Admin Dashboard">
           <header>

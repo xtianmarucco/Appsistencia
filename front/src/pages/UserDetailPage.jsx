@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { fetchUserStats } from "../services/userDetailService"; // Importa tu service
 import { useParams } from "react-router-dom";
 
-// import Navbar from "../components/navbar/Navbar";
+import Navbar from "../components/navbar/Navbar";
 import UserDetailCard from "../components/user-detail/UserDetailCard";
 import UserShiftsCalendar from "../components/user-calendar/UserShiftsCalendar";
 import Footer from "../components/layout/Footer";
@@ -63,7 +63,7 @@ const UserDetailPage = () => {
 
   return (
     <>
-      {/* <Navbar /> */}
+       <Navbar />
       <main className="p-8 mx-1.5" aria-label="Detalle del usuario">
         <header>
           <h1 className="text-2xl font-bold mb-6">Detalle del Usuario</h1>
