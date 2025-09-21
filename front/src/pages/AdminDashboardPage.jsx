@@ -63,7 +63,7 @@ const AdminDashboard = () => {
 
   return (
     <>
-      <Navbar />
+     <Navbar /> 
       <main className="p-4 text-primary-text">
         <section className="p-6" aria-label="Admin Dashboard">
           <header>

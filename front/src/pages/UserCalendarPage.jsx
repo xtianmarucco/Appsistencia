@@ -25,7 +25,7 @@ export default function UserCalendarPage() {
 
   return (
     <>
-     <Navbar />
+     <Navbar /> 
       <main className="p-8 max-w-6xl mx-auto">
         <UserShiftsCalendar events={events} loading={loading} />
       </main>

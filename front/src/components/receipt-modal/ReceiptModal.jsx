@@ -1,63 +1,99 @@
-import PropTypes from "prop-types";
-import html2pdf from "html2pdf.js";
+// src/components/modals/ReceiptModal.jsx
+import { useState } from "react";
+import { createReceipt } from "../../services/receiptService";
+import generatePDF from "react-pdf-html";
 
-export default function ReceiptModal({
-  receiptData,
-  onSaveReceipt,
-  onClose,
-}) {
-  const handleDownloadPDF = () => {
-    const element = document.getElementById("receipt-content");
-    html2pdf().from(element).save();
+const ReceiptModal = ({ user, summary, dateRange, onClose }) => {
+  const [observations, setObservations] = useState("");
+
+  const handleSave = async (generate = false) => {
+    try {
+      const receiptData = {
+        user_id: user.id,
+        start_date: dateRange.startDate,
+        end_date: dateRange.endDate,
+        total_hours: summary.totalHours,
+        total_shifts: summary.totalShifts,
+        hourly_wage: user.hourly_wage,
+        total_amount: summary.totalAmount,
+      };
+
+      // Primero guardamos el recibo en la base de datos
+      const savedReceipt = await createReceipt(receiptData);
+
+      // Luego generamos el PDF si corresponde
+      if (generate) {
+        const html = `
+          <div>
+            <h1>Recibo de Pago</h1>
+            <p><strong>Nombre:</strong> ${user.first_name} ${user.last_name}</p>
+            <p><strong>Periodo:</strong> ${new Date(dateRange.startDate).toLocaleDateString()} - ${new Date(dateRange.endDate).toLocaleDateString()}</p>
+            <p><strong>Turnos trabajados:</strong> ${summary.totalShifts}</p>
+            <p><strong>Horas trabajadas:</strong> ${summary.totalHours}</p>
+            <p><strong>Total a cobrar:</strong> $${summary.totalAmount.toFixed(2)}</p>
+            <p><strong>Observaciones:</strong> ${observations || "Ninguna"}</p>
+          </div>
+        `;
+
+        await generatePDF(html, {
+          filename: `Recibo-${user.first_name}-${user.last_name}.pdf`,
+        });
+      }
+
+      onClose();
+    } catch (err) {
+      console.error("Error al guardar recibo:", err);
+    }
   };
 
   return (
-    <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center">
-      <div className="bg-white rounded-lg shadow-lg p-6 w-96">
-        <h2 className="text-xl font-bold mb-4">Detalle del Recibo</h2>
-        <div id="receipt-content">
-          <p><strong>Nombre:</strong> {receiptData.name}</p>
-          <p><strong>Período:</strong> {receiptData.period}</p>
-          <p><strong>Turnos:</strong> {receiptData.totalShifts}</p>
-          <p><strong>Horas trabajadas:</strong> {receiptData.totalHours}</p>
-          <p><strong>Valor por hora:</strong> ${receiptData.hourlyWage}</p>
-          <p><strong>Total a pagar:</strong> ${receiptData.totalAmount}</p>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+      <div className="bg-white rounded-lg shadow-lg w-full max-w-lg p-6 relative">
+        <h2 className="text-xl font-semibold mb-4 text-center">Generar Recibo</h2>
+
+        <div className="mb-4">
+          <p><strong>Nombre:</strong> {user.first_name} {user.last_name}</p>
+          <p><strong>Periodo:</strong> {new Date(dateRange.startDate).toLocaleDateString()} - {new Date(dateRange.endDate).toLocaleDateString()}</p>
+          <p><strong>Turnos:</strong> {summary.totalShifts}</p>
+          <p><strong>Horas:</strong> {summary.totalHours}</p>
+          <p><strong>Total a cobrar:</strong> ${summary.totalAmount.toFixed(2)}</p>
         </div>
-        <div className="mt-4 flex justify-between">
+
+        <div className="mb-4">
+          <label className="block font-medium mb-1">Observaciones:</label>
+          <textarea
+            value={observations}
+            onChange={(e) => setObservations(e.target.value)}
+            className="w-full border border-gray-300 rounded-md p-2"
+            placeholder="Opcional"
+            rows={3}
+          />
+        </div>
+
+        <div className="flex justify-between">
           <button
-            onClick={onSaveReceipt}
-            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+            onClick={() => handleSave(false)}
+            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
           >
             Guardar recibo
           </button>
           <button
-            onClick={handleDownloadPDF}
-            className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
+            onClick={() => handleSave(true)}
+            className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
           >
-            Descargar PDF
+            Guardar y descargar PDF
           </button>
         </div>
+
         <button
           onClick={onClose}
-
-          className="mt-4 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 w-full"
+          className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
         >
-          Cerrar
+          ✕
         </button>
       </div>
     </div>
   );
-}
-
-ReceiptModal.propTypes = {
-  receiptData: PropTypes.shape({
-    name: PropTypes.string.isRequired,
-    period: PropTypes.string.isRequired,
-    totalShifts: PropTypes.number.isRequired,
-    totalHours: PropTypes.number.isRequired,
-    hourlyWage: PropTypes.number.isRequired,
-    totalAmount: PropTypes.number.isRequired,
-  }).isRequired,
-  onSaveReceipt: PropTypes.func.isRequired,
-  onClose: PropTypes.func.isRequired,
 };
+
+export default ReceiptModal;

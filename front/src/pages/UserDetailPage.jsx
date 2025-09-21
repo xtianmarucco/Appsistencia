@@ -63,7 +63,7 @@ const UserDetailPage = () => {
 
   return (
     <>
-      <Navbar />
+       <Navbar />
       <main className="p-8 mx-1.5" aria-label="Detalle del usuario">
         <header>
           <h1 className="text-2xl font-bold mb-6">Detalle del Usuario</h1>

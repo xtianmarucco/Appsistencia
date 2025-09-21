@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { logoutUser } from "../../store/slices/userSlice"; // Asegúrate de tener este action
+import { logoutUser } from "../../store/slices/userSlice"
 import { useNavigate } from "react-router-dom";
 
 const Navbar = () => {
@@ -12,26 +12,24 @@ const Navbar = () => {
 
   const handleLogout = () => {
     dispatch(logoutUser()).then(() => {
-      navigate("/login"); // Redirige al usuario a la página de login
+      navigate("/login"); 
     });
   };
-  console.log(user.name);
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
   };
 
   return (
     <nav className="bg-gradient-to-br from-blue-800 via-blue-500 to-cyan-400 text-white p-4 flex justify-between items-center shadow-lg sticky top-0 z-50">
-      {/* Logo de la aplicación */}
+    
       <div
         className="flex items-center cursor-pointer"
         onClick={() => navigate("/admin")}
       >
         <span className="text-xl font-bold">Appsistencia</span>
-        <span className="ml-2">⏰</span> {/* Icono de reloj */}
+        <span className="ml-2">⏰</span> 
       </div>
 
-      {/* Links de navegación para admin */}
       {user?.role === "admin" && (
         <div className="flex items-center space-x-6">
           <button
@@ -51,7 +49,6 @@ const Navbar = () => {
         </div>
       )}
 
-      {/* ...existing code... */}
       <div className="relative">
         <div className="flex items-center space-x-4">
           <button
@@ -59,11 +56,11 @@ const Navbar = () => {
             className="flex items-center space-x-2 focus:outline-none"
           >
             <span className="text-base font-semibold">Hola {userName}</span>{" "}
-            <span>👤</span> {/* Icono de usuario */}
+            <span>👤</span> 
           </button>
         </div>
 
-        {/* Menú desplegable */}
+   
         {isDropdownOpen && (
           <div className="absolute right-0 mt-2 w-48 bg-gradient-to-br from-blue-800 via-blue-500 to-cyan-400 text-white rounded-lg shadow-lg overflow-hidden">
             <button

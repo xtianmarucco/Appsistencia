@@ -55,7 +55,7 @@ export default function UserDetail({ userId }) {
 
   return (
     <>
-      <Navbar className="bg-color-secondary" />
+     <Navbar className="bg-color-secondary" />
       <div className="p-6">
         <h2 className="text-2xl font-bold mb-4">Detalle del Usuario</h2>
         {user && (

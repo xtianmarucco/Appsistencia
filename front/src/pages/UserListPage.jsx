@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import UserList from "../components/user-list/UserList";
-import Navbar from "../components/navbar/Navbar";
+ import Navbar from "../components/navbar/Navbar";
 import Footer from "../components/layout/Footer";
 import NoEmployeeInfo from "../components/no-employee-info/NoEmployeeInfo";
 
@@ -28,7 +28,7 @@ export default function UserListPage() {
 
   return (
     <>
-      <Navbar className="bg-color-secondary" />
+     <Navbar className="bg-color-secondary" />
       <div className="p-6">
         <h2 className="text-2xl font-bold mb-4">Usuarios</h2>
         {loading ? (
