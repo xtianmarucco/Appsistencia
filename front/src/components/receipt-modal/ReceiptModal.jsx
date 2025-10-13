@@ -1,13 +1,14 @@
-// src/components/modals/ReceiptModal.jsx
 import { useState } from "react";
+import { Document, Page, pdf } from "@react-pdf/renderer";
+import Html from "react-pdf-html";
 import { createReceipt } from "../../services/receiptService";
-import generatePDF from "react-pdf-html";
 
 const ReceiptModal = ({ user, summary, dateRange, onClose }) => {
   const [observations, setObservations] = useState("");
 
   const handleSave = async (generate = false) => {
     try {
+      // 1. Preparar el recibo a guardar
       const receiptData = {
         user_id: user.id,
         start_date: dateRange.startDate,
@@ -18,15 +19,15 @@ const ReceiptModal = ({ user, summary, dateRange, onClose }) => {
         total_amount: summary.totalAmount,
       };
 
-      // Primero guardamos el recibo en la base de datos
+      // 2. Guardar el recibo en la base de datos
       const savedReceipt = await createReceipt(receiptData);
 
-      // Luego generamos el PDF si corresponde
+      // 3. Si se pidió generar y descargar el PDF
       if (generate) {
         const html = `
           <div>
             <h1>Recibo de Pago</h1>
-            <p><strong>Nombre:</strong> ${user.first_name} ${user.last_name}</p>
+            <p><strong>Nombre:</strong> ${user.name} ${user.lastname}</p>
             <p><strong>Periodo:</strong> ${new Date(dateRange.startDate).toLocaleDateString()} - ${new Date(dateRange.endDate).toLocaleDateString()}</p>
             <p><strong>Turnos trabajados:</strong> ${summary.totalShifts}</p>
             <p><strong>Horas trabajadas:</strong> ${summary.totalHours}</p>
@@ -35,11 +36,25 @@ const ReceiptModal = ({ user, summary, dateRange, onClose }) => {
           </div>
         `;
 
-        await generatePDF(html, {
-          filename: `Recibo-${user.first_name}-${user.last_name}.pdf`,
-        });
+        const receiptDoc = (
+          <Document>
+            <Page size="A4" style={{ padding: 24 }}>
+              <Html>{html}</Html>
+            </Page>
+          </Document>
+        );
+
+        // Generar y descargar el archivo PDF
+        const blob = await pdf(receiptDoc).toBlob();
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = `Recibo-${user.name}-${user.lastname}.pdf`;
+        link.click();
+        URL.revokeObjectURL(url);
       }
 
+      // 4. Cerrar modal
       onClose();
     } catch (err) {
       console.error("Error al guardar recibo:", err);
@@ -52,7 +67,7 @@ const ReceiptModal = ({ user, summary, dateRange, onClose }) => {
         <h2 className="text-xl font-semibold mb-4 text-center">Generar Recibo</h2>
 
         <div className="mb-4">
-          <p><strong>Nombre:</strong> {user.first_name} {user.last_name}</p>
+          <p><strong>Nombre:</strong> {user.name} {user.lastname}</p>
           <p><strong>Periodo:</strong> {new Date(dateRange.startDate).toLocaleDateString()} - {new Date(dateRange.endDate).toLocaleDateString()}</p>
           <p><strong>Turnos:</strong> {summary.totalShifts}</p>
           <p><strong>Horas:</strong> {summary.totalHours}</p>
