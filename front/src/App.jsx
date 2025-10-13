@@ -1,4 +1,5 @@
 import { BrowserRouter as Router } from "react-router-dom";
+import { Toaster } from "react-hot-toast";
 import Layout from "./components/layout/Layout";
 import AppRoutes from "./routes/routes";
 
@@ -9,6 +10,7 @@ export default function App() {
       <Layout>
         <AppRoutes />
       </Layout>
+      <Toaster />
     </Router>
   );
 }

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Document, Page, pdf } from "@react-pdf/renderer";
 import Html from "react-pdf-html";
+import toast from "react-hot-toast";
 import { createReceipt } from "../../services/receiptService";
 
 const ReceiptModal = ({ user, summary, dateRange, onClose }) => {
@@ -20,7 +21,8 @@ const ReceiptModal = ({ user, summary, dateRange, onClose }) => {
       };
 
       // 2. Guardar el recibo en la base de datos
-      const savedReceipt = await createReceipt(receiptData);
+      await createReceipt(receiptData);
+      toast.success("Recibo guardado exitosamente.");
 
       // 3. Si se pidió generar y descargar el PDF
       if (generate) {
@@ -52,13 +54,16 @@ const ReceiptModal = ({ user, summary, dateRange, onClose }) => {
         link.download = `Recibo-${user.name}-${user.lastname}.pdf`;
         link.click();
         URL.revokeObjectURL(url);
+        toast.success("PDF generado y descargado.");
       }
-
-      // 4. Cerrar modal
-      onClose();
     } catch (err) {
       console.error("Error al guardar recibo:", err);
+      toast.error("Hubo un problema al guardar el recibo.");
+      onClose();
+      return;
     }
+
+    onClose();
   };
 
   return (
